@@ -15205,9 +15205,10 @@ var X$1 = createLucideIcon("x", [["path", {
 	d: "m6 6 12 12",
 	key: "d8bk6v"
 }]]);
+// src/utils/pagination.ts
 /**
-* Arranges questions strictly 5 per vertical column, expanding rightward to new columns,
-* and groups columns into horizontal bands of `columnsPerRow` (2 or 3) so they fit cleanly on A4 portrait.
+* Arranges questions horizontally row-by-row (left-right-left-right starting from question 2),
+* with `columnsPerRow` (2 or 3) questions per row so they fit cleanly on A4 portrait.
 */
 function buildQuestionBands(questions, columnsPerRow) {
 	if (questions.length === 0) return [];
@@ -15215,13 +15216,14 @@ function buildQuestionBands(questions, columnsPerRow) {
 		question,
 		number: idx + 1
 	}));
-	const allColumns = [];
-	for (let i = 0; i < numbered.length; i += 5) allColumns.push(numbered.slice(i, i + 5));
 	const bands = [];
-	for (let i = 0; i < allColumns.length; i += columnsPerRow) bands.push({
-		bandIndex: bands.length,
-		columns: allColumns.slice(i, i + columnsPerRow)
-	});
+	for (let i = 0; i < numbered.length; i += columnsPerRow) {
+		const rowSlice = numbered.slice(i, i + columnsPerRow);
+		bands.push({
+			bandIndex: bands.length,
+			columns: rowSlice.map((item) => [item])
+		});
+	}
 	return bands;
 }
 /**
@@ -15340,15 +15342,9 @@ function formatScore(score) {
 	if (!Number.isFinite(score)) return "0";
 	return Number(score.toFixed(2)).toString();
 }
-function getChineseSectionNumeral(index) {
-	return [
-		"一",
-		"二",
-		"三",
-		"四",
-		"五",
-		"六"
-	][index] ?? String(index + 1);
+function getSectionLetter(index) {
+	if (index >= 0 && index < 26) return String.fromCharCode(65 + index);
+	return String(index + 1);
 }
 // node_modules/react/cjs/react-jsx-runtime.production.js
 /**
@@ -15751,7 +15747,7 @@ var QuestionBandView = ({ band, columnsPerRow, placeholder, focusedQuestionId, o
 };
 // src/components/SectionHeaderBar.tsx
 var SectionHeaderBar = ({ section, sectionOrderIndex, onTitleChange, onTargetTotalChange, onEnableAutoScore, onSwapSections, dragHandleProps, setDragActivatorRef, readOnlyPreview = false }) => {
-	const numeral = getChineseSectionNumeral(sectionOrderIndex);
+	const sectionLetter = getSectionLetter(sectionOrderIndex);
 	const count = section.questions.length;
 	const actualSum = getSectionSumScore(section);
 	const firstScore = count > 0 ? section.questions[0].score : 0;
@@ -15764,8 +15760,8 @@ var SectionHeaderBar = ({ section, sectionOrderIndex, onTitleChange, onTargetTot
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 				className: "text-[16px] font-bold text-slate-950",
 				children: [
-					numeral,
-					"、",
+					sectionLetter,
+					".",
 					section.title || (section.id === "zhToEn" ? "中翻英" : "英翻中")
 				]
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
@@ -15789,7 +15785,7 @@ var SectionHeaderBar = ({ section, sectionOrderIndex, onTitleChange, onTargetTot
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 					className: "text-[16px] font-bold text-slate-950 shrink-0",
-					children: [numeral, "、"]
+					children: [sectionLetter, "."]
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
 					type: "text",
@@ -16148,8 +16144,8 @@ var ExamPaperWorkspace = ({ exam, focusedQuestionId, onFocusHandled, onHeaderCha
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(GripVertical, { className: "w-4 h-4 text-blue-600" }),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [
 							"移動區塊：",
-							getChineseSectionNumeral(activeSectionIdx),
-							"、",
+							getSectionLetter(activeSectionIdx),
+							".",
 							activeSectionData.title
 						] }),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
@@ -37206,7 +37202,7 @@ async function exportExamToDocx(exam) {
 	}));
 	exam.sectionOrder.forEach((sectionId, sectionIdx) => {
 		const section = exam.sections[sectionId];
-		const titleText = `${getChineseSectionNumeral(sectionIdx)}、${section.title.trim() || (sectionId === "zhToEn" ? "中翻英" : "英翻中")}`;
+		const titleText = `${getSectionLetter(sectionIdx)}.${section.title.trim() || (sectionId === "zhToEn" ? "中翻英" : "英翻中")}`;
 		const summaryText = buildSectionScoreSummary$1(section);
 		children.push(new Paragraph({
 			keepNext: true,
@@ -37255,9 +37251,9 @@ async function exportExamToDocx(exam) {
 		const bands = buildQuestionBands(section.questions, exam.columnsPerRow);
 		const colCount = exam.columnsPerRow;
 		const colWidth = Math.floor(usableWidthTwips / colCount);
-		bands.forEach((band, bandIdx) => {
+		const rows = [];
+		bands.forEach((band) => {
 			const maxRowsInBand = Math.max(...band.columns.map((col) => col.length), 1);
-			const rows = [];
 			for (let r = 0; r < maxRowsInBand; r++) {
 				const cells = [];
 				for (let c = 0; c < colCount; c++) {
@@ -37347,23 +37343,16 @@ async function exportExamToDocx(exam) {
 					children: cells
 				}));
 			}
-			children.push(new Table({
-				width: {
-					size: usableWidthTwips,
-					type: WidthType.DXA
-				},
-				layout: TableLayoutType.FIXED,
-				borders: INVISIBLE_TABLE_BORDERS,
-				rows
-			}));
-			if (bandIdx < bands.length - 1) children.push(new Paragraph({
-				spacing: {
-					before: 40,
-					after: 80
-				},
-				children: []
-			}));
 		});
+		children.push(new Table({
+			width: {
+				size: usableWidthTwips,
+				type: WidthType.DXA
+			},
+			layout: TableLayoutType.FIXED,
+			borders: INVISIBLE_TABLE_BORDERS,
+			rows
+		}));
 	});
 	if (exam.blankSections.length > 0) exam.blankSections.forEach(() => {
 		children.push(new Paragraph({
@@ -79715,13 +79704,13 @@ async function exportExamToPdf(exam) {
 			rowHeights.push(maxRowH);
 		}
 		return {
-			bandHeight: rowHeights.reduce((a, b) => a + b, 0) + 3,
+			bandHeight: rowHeights.reduce((a, b) => a + b, 0) + 1.2,
 			rowHeights
 		};
 	};
 	exam.sectionOrder.forEach((sectionId, sectionIdx) => {
 		const section = exam.sections[sectionId];
-		const titleText = `${getChineseSectionNumeral(sectionIdx)}、${section.title.trim() || (sectionId === "zhToEn" ? "中翻英" : "英翻中")}`;
+		const titleText = `${getSectionLetter(sectionIdx)}.${section.title.trim() || (sectionId === "zhToEn" ? "中翻英" : "英翻中")}`;
 		const summaryText = buildSectionScoreSummary(section);
 		const colGap = 6;
 		const colCount = exam.columnsPerRow;
