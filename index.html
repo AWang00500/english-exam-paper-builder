@@ -14869,6 +14869,30 @@ var createLucideIcon = (iconName, iconNode) => {
 * This source code is licensed under the ISC license.
 * See the LICENSE file in the root directory of this source tree.
 */
+var ArrowLeftRight = createLucideIcon("arrow-left-right", [
+	["path", {
+		d: "M8 3 4 7l4 4",
+		key: "9rb6wj"
+	}],
+	["path", {
+		d: "M4 7h16",
+		key: "6tx8e3"
+	}],
+	["path", {
+		d: "m16 21 4-4-4-4",
+		key: "siv7j2"
+	}],
+	["path", {
+		d: "M20 17H4",
+		key: "h6l3hr"
+	}]
+]);
+/**
+* @license lucide-react v0.546.0 - ISC
+*
+* This source code is licensed under the ISC license.
+* See the LICENSE file in the root directory of this source tree.
+*/
 var ArrowUpDown = createLucideIcon("arrow-up-down", [
 	["path", {
 		d: "m21 16-4 4-4-4",
@@ -15198,6 +15222,26 @@ var Trash2 = createLucideIcon("trash-2", [
 * This source code is licensed under the ISC license.
 * See the LICENSE file in the root directory of this source tree.
 */
+var TriangleAlert = createLucideIcon("triangle-alert", [
+	["path", {
+		d: "m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3",
+		key: "wmoenq"
+	}],
+	["path", {
+		d: "M12 9v4",
+		key: "juzpu7"
+	}],
+	["path", {
+		d: "M12 17h.01",
+		key: "p32p05"
+	}]
+]);
+/**
+* @license lucide-react v0.546.0 - ISC
+*
+* This source code is licensed under the ISC license.
+* See the LICENSE file in the root directory of this source tree.
+*/
 var X$1 = createLucideIcon("x", [["path", {
 	d: "M18 6 6 18",
 	key: "1bl5f8"
@@ -15205,17 +15249,27 @@ var X$1 = createLucideIcon("x", [["path", {
 	d: "m6 6 12 12",
 	key: "d8bk6v"
 }]]);
-// src/utils/pagination.ts
 /**
-* Arranges questions horizontally row-by-row (left-right-left-right starting from question 2),
-* with `columnsPerRow` (2 or 3) questions per row so they fit cleanly on A4 portrait.
+* Arranges questions according to the section's `layoutMode`:
+* - 'horizontal': left-right-left-right row-by-row starting from question 2
+* - 'vertical': 5 questions vertically per column, expanding rightward to the next column
 */
-function buildQuestionBands(questions, columnsPerRow) {
+function buildQuestionBands(questions, columnsPerRow, layoutMode = "horizontal") {
 	if (questions.length === 0) return [];
 	const numbered = questions.map((question, idx) => ({
 		question,
 		number: idx + 1
 	}));
+	if (layoutMode === "vertical") {
+		const allColumns = [];
+		for (let i = 0; i < numbered.length; i += 5) allColumns.push(numbered.slice(i, i + 5));
+		const bands = [];
+		for (let i = 0; i < allColumns.length; i += columnsPerRow) bands.push({
+			bandIndex: bands.length,
+			columns: allColumns.slice(i, i + columnsPerRow)
+		});
+		return bands;
+	}
 	const bands = [];
 	for (let i = 0; i < numbered.length; i += columnsPerRow) {
 		const rowSlice = numbered.slice(i, i + columnsPerRow);
@@ -15644,8 +15698,60 @@ var ExamHeaderBlock = ({ header, onChange, onAddInfoField, readOnlyPreview = fal
 		})
 	});
 };
+// src/components/FourLineBlank.tsx
+/**
+* Traditional monochrome English handwriting 4-line 3-space practice grid:
+* - Line 1 (top): thin gray solid
+* - Line 2 (mid x-height): dashed gray
+* - Line 3 (baseline): crisp dark solid
+* - Line 4 (bottom descender): thin gray solid
+*/
+var FourLineBlank = ({ width = 112, height = 38, className = "" }) => {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", {
+		width,
+		height,
+		viewBox: "0 0 112 38",
+		className: `inline-block shrink-0 align-middle ${className}`,
+		"aria-hidden": "true",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("line", {
+				x1: "0",
+				y1: "2",
+				x2: "112",
+				y2: "2",
+				stroke: "#9ca3af",
+				strokeWidth: "1"
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("line", {
+				x1: "0",
+				y1: "13",
+				x2: "112",
+				y2: "13",
+				stroke: "#6b7280",
+				strokeWidth: "1",
+				strokeDasharray: "3 2.5"
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("line", {
+				x1: "0",
+				y1: "24",
+				x2: "112",
+				y2: "24",
+				stroke: "#111827",
+				strokeWidth: "1.5"
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("line", {
+				x1: "0",
+				y1: "35",
+				x2: "112",
+				y2: "35",
+				stroke: "#9ca3af",
+				strokeWidth: "1"
+			})
+		]
+	});
+};
 // src/components/QuestionBandView.tsx
-var QuestionBandView = ({ band, columnsPerRow, placeholder, focusedQuestionId, onFocusHandled, onQuestionTextChange, onQuestionScoreChange, onDeleteQuestion, onEnterSubmit, readOnlyPreview = false }) => {
+var QuestionBandView = ({ band, columnsPerRow, placeholder, focusedQuestionId, onFocusHandled, onQuestionTextChange, onQuestionScoreChange, onDeleteQuestion, onEnterSubmit, answerLineStyle = "underline", readOnlyPreview = false }) => {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 		className: "grid gap-x-5 items-start py-1",
 		style: { gridTemplateColumns: `repeat(${columnsPerRow}, minmax(0, 1fr))` },
@@ -15653,7 +15759,7 @@ var QuestionBandView = ({ band, columnsPerRow, placeholder, focusedQuestionId, o
 			className: "flex flex-col gap-2.5 min-w-0",
 			children: column.map(({ question, number }) => {
 				if (readOnlyPreview) return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "flex items-baseline flex-wrap gap-x-1 gap-y-0.5 text-[14px] leading-snug text-slate-950",
+					className: `flex flex-wrap gap-x-1 gap-y-0.5 text-[14px] leading-snug text-slate-950 ${answerLineStyle === "four-line" ? "items-center" : "items-baseline"}`,
 					children: [
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 							className: "font-semibold tabular-nums shrink-0",
@@ -15663,7 +15769,10 @@ var QuestionBandView = ({ band, columnsPerRow, placeholder, focusedQuestionId, o
 							className: "break-words",
 							children: [question.text || "________", "："]
 						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+						answerLineStyle === "four-line" ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FourLineBlank, {
+							width: 112,
+							height: 38
+						}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 							className: "inline-block w-[112px] shrink-0 border-b border-slate-950 h-[1.15em]",
 							"aria-hidden": "true"
 						}),
@@ -15708,7 +15817,10 @@ var QuestionBandView = ({ band, columnsPerRow, placeholder, focusedQuestionId, o
 							className: "shrink-0 select-none",
 							children: "："
 						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+						answerLineStyle === "four-line" ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FourLineBlank, {
+							width: 112,
+							height: 38
+						}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 							className: "inline-block w-[112px] shrink-0 border-b border-slate-950 h-[1.15em]",
 							"aria-hidden": "true"
 						}),
@@ -15889,10 +16001,12 @@ var SortableSectionStarter = ({ sectionId, isActiveDropTarget, children }) => {
 		})
 	});
 };
-var ExamPaperWorkspace = ({ exam, focusedQuestionId, onFocusHandled, onHeaderChange, onAddInfoField, onSectionOrderChange, onSectionTitleChange, onSectionTargetTotalChange, onEnableAutoScore, onAddQuestion, onQuestionTextChange, onQuestionScoreChange, onDeleteQuestion, onAddBlankBlock, onDeleteBlankBlock, onPageCountChange }) => {
+var ExamPaperWorkspace = ({ exam, focusedQuestionId, onFocusHandled, onHeaderChange, onAddInfoField, onSectionOrderChange, onSectionTitleChange, onSectionLayoutModeChange, onSectionTargetTotalChange, onEnableAutoScore, onAddQuestion, onQuestionTextChange, onQuestionScoreChange, onDeleteQuestion, onAddBlankBlock, onDeleteBlankBlock, onPageCountChange, zhToEnStyle, onFourLinePageCountChange }) => {
 	const [activeDragSection, setActiveDragSection] = (0, import_react.useState)(null);
 	const [heightsByKey, setHeightsByKey] = (0, import_react.useState)({});
+	const [fourLineHeightsByKey, setFourLineHeightsByKey] = (0, import_react.useState)({});
 	const measureRefs = (0, import_react.useRef)({});
+	const measureFourLineRefs = (0, import_react.useRef)({});
 	const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }), useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }));
 	const chunks = (0, import_react.useMemo)(() => {
 		const list = [{
@@ -15901,7 +16015,7 @@ var ExamPaperWorkspace = ({ exam, focusedQuestionId, onFocusHandled, onHeaderCha
 		}];
 		exam.sectionOrder.forEach((sectionId, sectionOrderIndex) => {
 			const section = exam.sections[sectionId];
-			const bands = buildQuestionBands(section.questions, exam.columnsPerRow);
+			const bands = buildQuestionBands(section.questions, exam.columnsPerRow, section.layoutMode ?? "horizontal");
 			if (bands.length === 0) list.push({
 				key: `section_${sectionId}_empty`,
 				type: "section-empty",
@@ -15932,22 +16046,37 @@ var ExamPaperWorkspace = ({ exam, focusedQuestionId, onFocusHandled, onHeaderCha
 	}, [exam]);
 	const measureChunks = (0, import_react.useCallback)(() => {
 		const nextHeights = {};
+		const nextFourLineHeights = {};
 		let changed = false;
+		let fourLineChanged = false;
 		for (const chunk of chunks) {
 			const el = measureRefs.current[chunk.key];
 			const h = el ? Math.ceil(el.getBoundingClientRect().height) : 120;
 			nextHeights[chunk.key] = h;
 			if (heightsByKey[chunk.key] !== h) changed = true;
+			const flEl = chunk.type === "section-band" && chunk.sectionId === "zhToEn" ? measureFourLineRefs.current[chunk.key] : el;
+			const flH = flEl ? Math.ceil(flEl.getBoundingClientRect().height) : h;
+			nextFourLineHeights[chunk.key] = flH;
+			if (fourLineHeightsByKey[chunk.key] !== flH) fourLineChanged = true;
 		}
 		if (changed || Object.keys(heightsByKey).length !== chunks.length) setHeightsByKey(nextHeights);
-	}, [chunks, heightsByKey]);
+		if (fourLineChanged || Object.keys(fourLineHeightsByKey).length !== chunks.length) setFourLineHeightsByKey(nextFourLineHeights);
+	}, [
+		chunks,
+		heightsByKey,
+		fourLineHeightsByKey
+	]);
 	(0, import_react.useLayoutEffect)(() => {
 		measureChunks();
 	}, [measureChunks]);
 	const pages = (0, import_react.useMemo)(() => packChunksIntoPages(chunks, heightsByKey, MAX_PAGE_CONTENT_HEIGHT_PX), [chunks, heightsByKey]);
+	const fourLinePages = (0, import_react.useMemo)(() => packChunksIntoPages(chunks, fourLineHeightsByKey, MAX_PAGE_CONTENT_HEIGHT_PX), [chunks, fourLineHeightsByKey]);
 	(0, import_react.useEffect)(() => {
 		onPageCountChange(pages.length);
 	}, [pages.length, onPageCountChange]);
+	(0, import_react.useEffect)(() => {
+		onFourLinePageCountChange(fourLinePages.length);
+	}, [fourLinePages.length, onFourLinePageCountChange]);
 	const handleDragStart = (event) => {
 		setActiveDragSection(event.active.id);
 	};
@@ -15972,7 +16101,7 @@ var ExamPaperWorkspace = ({ exam, focusedQuestionId, onFocusHandled, onHeaderCha
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Plus, { className: "w-3.5 h-3.5" }), "新增一題"]
 		})
 	});
-	const renderChunk = (chunk, readOnlyPreview = false) => {
+	const renderChunk = (chunk, readOnlyPreview = false, overrideZhStyle) => {
 		if (chunk.type === "header") return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ExamHeaderBlock, {
 			header: exam.header,
 			onChange: onHeaderChange,
@@ -16028,6 +16157,7 @@ var ExamPaperWorkspace = ({ exam, focusedQuestionId, onFocusHandled, onHeaderCha
 		if (chunk.type === "section-band") {
 			const section = exam.sections[chunk.sectionId];
 			const placeholder = chunk.sectionId === "zhToEn" ? "輸入中文題目" : "輸入英文單字";
+			const activeLineStyle = chunk.sectionId === "zhToEn" ? overrideZhStyle ?? zhToEnStyle : "underline";
 			const bandContent = /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: chunk.isFirstBand ? "pt-2" : "",
 				children: [
@@ -16050,6 +16180,7 @@ var ExamPaperWorkspace = ({ exam, focusedQuestionId, onFocusHandled, onHeaderCha
 						onQuestionScoreChange: (qId, score) => onQuestionScoreChange(chunk.sectionId, qId, score),
 						onDeleteQuestion: (qId) => onDeleteQuestion(chunk.sectionId, qId),
 						onEnterSubmit: () => onAddQuestion(chunk.sectionId),
+						answerLineStyle: activeLineStyle,
 						readOnlyPreview
 					}),
 					chunk.isLastBand && (readOnlyPreview ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "h-[36px]" }) : renderSectionAddButton(chunk.sectionId))
@@ -16080,7 +16211,8 @@ var ExamPaperWorkspace = ({ exam, focusedQuestionId, onFocusHandled, onHeaderCha
 							onQuestionTextChange: (qId, text) => onQuestionTextChange(chunk.sectionId, qId, text),
 							onQuestionScoreChange: (qId, score) => onQuestionScoreChange(chunk.sectionId, qId, score),
 							onDeleteQuestion: (qId) => onDeleteQuestion(chunk.sectionId, qId),
-							onEnterSubmit: () => onAddQuestion(chunk.sectionId)
+							onEnterSubmit: () => onAddQuestion(chunk.sectionId),
+							answerLineStyle: activeLineStyle
 						}),
 						chunk.isLastBand && renderSectionAddButton(chunk.sectionId)
 					]
@@ -16099,15 +16231,20 @@ var ExamPaperWorkspace = ({ exam, focusedQuestionId, onFocusHandled, onHeaderCha
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		className: "relative py-6 sm:py-8 px-4 flex flex-col items-center overflow-x-auto",
 		children: [
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				"aria-hidden": "true",
 				className: "fixed -left-[9999px] top-0 w-[674px] pointer-events-none opacity-0 font-exam",
-				children: chunks.map((chunk) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				children: [chunks.map((chunk) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 					ref: (el) => {
 						measureRefs.current[chunk.key] = el;
 					},
 					children: renderChunk(chunk, true)
-				}, chunk.key))
+				}, chunk.key)), chunks.filter((c) => c.type === "section-band" && c.sectionId === "zhToEn").map((chunk) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					ref: (el) => {
+						measureFourLineRefs.current[chunk.key] = el;
+					},
+					children: renderChunk(chunk, true, "four-line")
+				}, `fl_${chunk.key}`))]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(DndContext, {
 				sensors,
@@ -16125,7 +16262,52 @@ var ExamPaperWorkspace = ({ exam, focusedQuestionId, onFocusHandled, onHeaderCha
 							className: "exam-page relative w-[794px] h-[1123px] bg-white text-slate-950 font-exam shadow-[0_6px_28px_rgba(15,23,42,0.08)] border border-slate-200/90 px-[60px] pt-[56px] pb-[52px] flex flex-col justify-between shrink-0",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 								className: "flex flex-col gap-3",
-								children: pageChunks.map((chunk) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: renderChunk(chunk, false) }, chunk.key))
+								children: (() => {
+									const groups = [];
+									for (const chunk of pageChunks) {
+										const secId = chunk.type === "section-band" || chunk.type === "section-empty" ? chunk.sectionId : null;
+										const lastGroup = groups[groups.length - 1];
+										if (secId && lastGroup && lastGroup.sectionId === secId) lastGroup.chunks.push(chunk);
+										else groups.push({
+											key: secId ? `group_${secId}_${pageIndex}` : chunk.key,
+											sectionId: secId,
+											chunks: [chunk]
+										});
+									}
+									return groups.map((group) => {
+										if (!group.sectionId) {
+											const single = group.chunks[0];
+											return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: renderChunk(single, false) }, single.key);
+										}
+										const sectionId = group.sectionId;
+										const section = exam.sections[sectionId];
+										const layoutMode = section.layoutMode ?? "horizontal";
+										const showLeftToggle = group.chunks.some((c) => c.type === "section-empty" || c.type === "section-band" && c.isFirstBand);
+										return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+											className: "relative flex flex-col gap-3",
+											children: [showLeftToggle && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+												className: "print:hidden absolute -left-[46px] top-1/2 -translate-y-1/2 z-10 flex flex-col bg-white border border-slate-200 rounded-lg shadow-xs p-0.5 gap-0.5",
+												role: "group",
+												"aria-label": `${section.title} 題目排列方式切換`,
+												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+													type: "button",
+													onClick: () => onSectionLayoutModeChange(sectionId, "vertical"),
+													title: "直向五題一欄（1~5 直排再換右欄）",
+													"aria-pressed": layoutMode === "vertical",
+													className: `w-7 h-7 flex items-center justify-center rounded-md transition-colors cursor-pointer ${layoutMode === "vertical" ? "bg-blue-700 text-white" : "text-slate-500 hover:text-slate-900 hover:bg-slate-100"}`,
+													children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ArrowUpDown, { className: "w-3.5 h-3.5" })
+												}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+													type: "button",
+													onClick: () => onSectionLayoutModeChange(sectionId, "horizontal"),
+													title: "左右交替並排（1 左 2 右、3 左 4 右）",
+													"aria-pressed": layoutMode === "horizontal",
+													className: `w-7 h-7 flex items-center justify-center rounded-md transition-colors cursor-pointer ${layoutMode === "horizontal" ? "bg-blue-700 text-white" : "text-slate-500 hover:text-slate-900 hover:bg-slate-100"}`,
+													children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ArrowLeftRight, { className: "w-3.5 h-3.5" })
+												})]
+											}), group.chunks.map((chunk) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: renderChunk(chunk, false) }, chunk.key))]
+										}, group.key);
+									});
+								})()
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("footer", {
 								className: "text-center text-[11.5px] text-slate-500 tabular-nums pt-2 select-none",
 								children: [
@@ -16169,6 +16351,172 @@ var ExamPaperWorkspace = ({ exam, focusedQuestionId, onFocusHandled, onHeaderCha
 				})
 			})
 		]
+	});
+};
+// src/components/ExportStyleModals.tsx
+function getActionLabel(action) {
+	switch (action) {
+		case "word": return "匯出 Word";
+		case "pdf": return "匯出 PDF";
+		case "print": return "列印考卷";
+		default: return "輸出考卷";
+	}
+}
+var ExportStyleModals = ({ step, actionType, selectedStyle, estimatedFourLinePages, onSelectStyle, onConfirmStyle, onBackToStyleModal, onConfirmOverflowExport, onClose }) => {
+	if (step === "none") return null;
+	const actionLabel = getActionLabel(actionType);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "print:hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 backdrop-blur-[1px] p-4",
+		role: "dialog",
+		"aria-modal": "true",
+		"aria-labelledby": "export-modal-title",
+		children: [step === "choose-style" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			className: "w-full max-w-md bg-white rounded-xl border border-slate-200 shadow-2xl overflow-hidden",
+			children: [
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "px-5 py-4 border-b border-slate-100 flex items-center justify-between",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", {
+						id: "export-modal-title",
+						className: "text-base font-bold text-slate-900",
+						children: [actionLabel, " — 選擇中翻英作答格樣式"]
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+						type: "button",
+						onClick: onClose,
+						"aria-label": "關閉視窗",
+						className: "p-1 text-slate-400 hover:text-slate-700 rounded-md hover:bg-slate-100 cursor-pointer",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(X$1, { className: "w-4 h-4" })
+					})]
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "p-5 space-y-3",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+						className: "text-xs text-slate-600 leading-relaxed",
+						children: "請選擇本次輸出時「中翻英」大題的作答線條樣式（英翻中維持單底線）："
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "grid grid-cols-1 gap-3",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+							type: "button",
+							onClick: () => onSelectStyle("underline"),
+							className: `w-full text-left p-3.5 rounded-lg border-2 transition-all cursor-pointer ${selectedStyle === "underline" ? "border-blue-600 bg-blue-50/50" : "border-slate-200 hover:border-slate-300 bg-white"}`,
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "flex items-center justify-between mb-2",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									className: "text-sm font-semibold text-slate-900",
+									children: "單底線（一般測驗）"
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									className: `w-4 h-4 rounded-full border-2 flex items-center justify-center ${selectedStyle === "underline" ? "border-blue-600" : "border-slate-300"}`,
+									children: selectedStyle === "underline" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "w-2 h-2 rounded-full bg-blue-600" })
+								})]
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "bg-white border border-slate-200/80 rounded px-3 py-2 text-xs text-slate-800 flex items-baseline gap-1",
+								children: [
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: "font-semibold",
+										children: "1."
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "蘋果：" }),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "inline-block w-24 border-b border-slate-900" })
+								]
+							})]
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+							type: "button",
+							onClick: () => onSelectStyle("four-line"),
+							className: `w-full text-left p-3.5 rounded-lg border-2 transition-all cursor-pointer ${selectedStyle === "four-line" ? "border-blue-600 bg-blue-50/50" : "border-slate-200 hover:border-slate-300 bg-white"}`,
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "flex items-center justify-between mb-2",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									className: "text-sm font-semibold text-slate-900",
+									children: "英文四線三格（練習書寫用）"
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									className: `w-4 h-4 rounded-full border-2 flex items-center justify-center ${selectedStyle === "four-line" ? "border-blue-600" : "border-slate-300"}`,
+									children: selectedStyle === "four-line" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "w-2 h-2 rounded-full bg-blue-600" })
+								})]
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "bg-white border border-slate-200/80 rounded px-3 py-2 text-xs text-slate-800 flex items-center gap-1",
+								children: [
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: "font-semibold",
+										children: "1."
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "蘋果：" }),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FourLineBlank, {
+										width: 96,
+										height: 32
+									})
+								]
+							})]
+						})]
+					})]
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "px-5 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-2",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+						type: "button",
+						onClick: onClose,
+						className: "px-4 py-2 text-xs font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg transition-colors cursor-pointer",
+						children: "取消"
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+						type: "button",
+						onClick: onConfirmStyle,
+						className: "px-4 py-2 text-xs font-semibold text-white bg-blue-700 hover:bg-blue-800 rounded-lg transition-colors cursor-pointer",
+						children: ["確認並", actionLabel]
+					})]
+				})
+			]
+		}), step === "confirm-overflow" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			className: "w-full max-w-md bg-white rounded-xl border border-slate-200 shadow-2xl overflow-hidden",
+			children: [
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "px-5 py-4 border-b border-slate-100 flex items-center justify-between",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "flex items-center gap-2 text-amber-700",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TriangleAlert, { className: "w-5 h-5 shrink-0" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+							id: "export-modal-title",
+							className: "text-base font-bold text-slate-900",
+							children: "考卷頁數將超過 1 頁"
+						})]
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+						type: "button",
+						onClick: onClose,
+						"aria-label": "關閉視窗",
+						className: "p-1 text-slate-400 hover:text-slate-700 rounded-md hover:bg-slate-100 cursor-pointer",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(X$1, { className: "w-4 h-4" })
+					})]
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "p-5 space-y-2.5",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+						className: "text-sm text-slate-700 leading-relaxed",
+						children: [
+							"中翻英套用「英文四線三格」後，因書寫行高較高，整份考卷預計將排成",
+							" ",
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("strong", {
+								className: "font-semibold text-slate-950 tabular-nums",
+								children: [estimatedFourLinePages, " 頁"]
+							}),
+							"（超過 1 頁 A4 紙張）。"
+						]
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+						className: "text-xs text-slate-500",
+						children: "您可以繼續輸出多頁考卷，或返回改選「單底線」。"
+					})]
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "px-5 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-2",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+						type: "button",
+						onClick: onBackToStyleModal,
+						className: "px-4 py-2 text-xs font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg transition-colors cursor-pointer",
+						children: "返回重選"
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+						type: "button",
+						onClick: onConfirmOverflowExport,
+						className: "px-4 py-2 text-xs font-semibold text-white bg-blue-700 hover:bg-blue-800 rounded-lg transition-colors cursor-pointer",
+						children: ["仍要繼續", actionLabel]
+					})]
+				})
+			]
+		})]
 	});
 };
 // src/components/TopToolbar.tsx
@@ -16372,6 +16720,7 @@ function createDefaultExam() {
 			zhToEn: {
 				id: "zhToEn",
 				title: "中翻英",
+				layoutMode: "horizontal",
 				isAutoScore: true,
 				targetTotalScore: 100,
 				questions: recalculateAutoScores(zhQuestions, 100)
@@ -16379,6 +16728,7 @@ function createDefaultExam() {
 			enToZh: {
 				id: "enToZh",
 				title: "英翻中",
+				layoutMode: "horizontal",
 				isAutoScore: true,
 				targetTotalScore: 100,
 				questions: recalculateAutoScores(enQuestions, 100)
@@ -19260,7 +19610,57 @@ var bytesOfWords = (words) => {
 	for (let index = 0; index < bytes.length; index++) bytes[index] = words[index >> 2] >>> 24 - (index & 3) * 8;
 	return bytes;
 };
+var rotateLeft = (word, bits) => word << bits | word >>> 32 - bits;
 var rotateRight = (word, bits) => word >>> bits | word << 32 - bits;
+var SHA1_INITIAL_HASH = [
+	1732584193,
+	4023233417,
+	2562383102,
+	271733878,
+	3285377520
+];
+var SHA1_ROUND_CONSTANTS = Int32Array.of(1518500249, 1859775393, 2400959708, 3395469782);
+var sha1Schedule = /* @__PURE__ */ new Int32Array(80);
+/** SHA-1 of bytes, as in FIPS 180-4 */
+var sha1 = (data) => {
+	const words = paddedWords(data);
+	const schedule = sha1Schedule;
+	let [h0, h1, h2, h3, h4] = SHA1_INITIAL_HASH;
+	for (let block = 0; block < words.length; block += 16) {
+		schedule.set(words.subarray(block, block + 16));
+		for (let t = 16; t < 80; t++) schedule[t] = rotateLeft(schedule[t - 3] ^ schedule[t - 8] ^ schedule[t - 14] ^ schedule[t - 16], 1);
+		let [a, b, c, d, e] = [
+			h0,
+			h1,
+			h2,
+			h3,
+			h4
+		];
+		for (let t = 0; t < 80; t++) {
+			const f = t < 20 ? b & c | ~b & d : t >= 40 && t < 60 ? b & c | b & d | c & d : b ^ c ^ d;
+			const next = rotateLeft(a, 5) + f + e + SHA1_ROUND_CONSTANTS[Math.floor(t / 20)] + schedule[t] | 0;
+			e = d;
+			d = c;
+			c = rotateLeft(b, 30);
+			b = a;
+			a = next;
+		}
+		[h0, h1, h2, h3, h4] = [
+			h0 + a | 0,
+			h1 + b | 0,
+			h2 + c | 0,
+			h3 + d | 0,
+			h4 + e | 0
+		];
+	}
+	return bytesOfWords([
+		h0,
+		h1,
+		h2,
+		h3,
+		h4
+	]);
+};
 var SHA256_ROUND_CONSTANTS = Int32Array.of(1116352408, 1899447441, 3049323471, 3921009573, 961987163, 1508970993, 2453635748, 2870763221, 3624381080, 310598401, 607225278, 1426881987, 1925078388, 2162078206, 2614888103, 3248222580, 3835390401, 4022224774, 264347078, 604807628, 770255983, 1249150122, 1555081692, 1996064986, 2554220882, 2821834349, 2952996808, 3210313671, 3336571891, 3584528711, 113926993, 338241895, 666307205, 773529912, 1294757372, 1396182291, 1695183700, 1986661051, 2177026350, 2456956037, 2730485921, 2820302411, 3259730800, 3345764771, 3516065817, 3600352804, 4094571909, 275423344, 430227734, 506948616, 659060556, 883997877, 958139571, 1322822218, 1537002063, 1747873779, 1955562222, 2024104815, 2227730452, 2361852424, 2428436474, 2756734187, 3204031479, 3329325298);
 var SHA256_INITIAL_HASH = [
 	1779033703,
@@ -19431,7 +19831,23 @@ var concreteNumUniqueNumericIdGen = () => uniqueNumericIdCreator(1);
 * ```
 */
 var docPropertiesUniqueNumericIdGen = () => uniqueNumericIdCreator();
-docPropertiesUniqueNumericIdGen();
+/**
+* Returns the next drawing ID from a single counter shared by every drawing.
+*
+* Drawing IDs (`wp:docPr` and `wps:cNvPr`) must be unique within a document,
+* and Word reports unreadable content when two drawings share one. A drawing
+* is created before it belongs to a document, so all drawings draw from this
+* one counter rather than a generator per instance.
+*
+* @returns A number no earlier call has returned
+*
+* @example
+* ```typescript
+* const first = docPropertiesUniqueNumericId();
+* const second = docPropertiesUniqueNumericId(); // first + 1
+* ```
+*/
+var docPropertiesUniqueNumericId = docPropertiesUniqueNumericIdGen();
 /**
 * Creates a unique numeric ID generator for bookmarks.
 *
@@ -19489,6 +19905,21 @@ var fitTextUniqueNumericId = () => -fitTextUniqueNumericIdGen();
 * @returns A unique lowercase string ID
 */
 var uniqueId = () => nanoid().toLowerCase();
+/**
+* Generates a SHA-1 hash of the provided data.
+*
+* Useful for generating deterministic IDs based on content, such as for
+* image references or revision tracking.
+*
+* @param data - The data to hash (Buffer, string, Uint8Array, or ArrayBuffer)
+* @returns A hexadecimal string representation of the SHA-1 hash
+*
+* @example
+* ```typescript
+* const hash = hashedId("Hello World"); // Returns "0a4d55a8d778e5022fab701977c5d840bbc486d0"
+* ```
+*/
+var hashedId = (data) => Array.from(sha1(typeof data === "string" ? encodeUtf8(data) : ArrayBuffer.isView(data) ? data : new Uint8Array(data)), (byte) => byte.toString(16).padStart(2, "0")).join("");
 /**
 * Generates a random hexadecimal string of specified length.
 *
@@ -20319,6 +20750,2124 @@ var TextRun = class extends Run {
 	}
 };
 /**
+* Horizontal Relative Positioning.
+*
+* Specifies the horizontal base from which the drawing position is calculated.
+*
+* Reference: https://www.datypic.com/sc/ooxml/t-wp_ST_RelFromH.html
+*
+* ## XSD Schema
+* ```xml
+* <xsd:simpleType name="ST_RelFromH">
+*   <xsd:restriction base="xsd:token">
+*     <xsd:enumeration value="margin"/>
+*     <xsd:enumeration value="page"/>
+*     <xsd:enumeration value="column"/>
+*     <xsd:enumeration value="character"/>
+*     <xsd:enumeration value="leftMargin"/>
+*     <xsd:enumeration value="rightMargin"/>
+*     <xsd:enumeration value="insideMargin"/>
+*     <xsd:enumeration value="outsideMargin"/>
+*   </xsd:restriction>
+* </xsd:simpleType>
+* ```
+*
+* @publicApi
+*/
+var HorizontalPositionRelativeFrom = {
+	/**
+	* ## Character
+	*
+	* Specifies that the horizontal positioning shall be relative to the position of the anchor within its run content.
+	*/
+	CHARACTER: "character",
+	/**
+	* ## Column
+	*
+	* Specifies that the horizontal positioning shall be relative to the extents of the column which contains its anchor.
+	*/
+	COLUMN: "column",
+	/**
+	* ## Inside Margin
+	*
+	* Specifies that the horizontal positioning shall be relative to the inside margin of the current page (the left margin on odd pages, right on even pages).
+	*/
+	INSIDE_MARGIN: "insideMargin",
+	/**
+	* ## Left Margin
+	*
+	* Specifies that the horizontal positioning shall be relative to the left margin of the page.
+	*/
+	LEFT_MARGIN: "leftMargin",
+	/**
+	* ## Page Margin
+	*
+	* Specifies that the horizontal positioning shall be relative to the page margins.
+	*/
+	MARGIN: "margin",
+	/**
+	* ## Outside Margin
+	*
+	* Specifies that the horizontal positioning shall be relative to the outside margin of the current page (the right margin on odd pages, left on even pages).
+	*/
+	OUTSIDE_MARGIN: "outsideMargin",
+	/**
+	* ## Page Edge
+	*
+	* Specifies that the horizontal positioning shall be relative to the edge of the page.
+	*/
+	PAGE: "page",
+	/**
+	* ## Right Margin
+	*
+	* Specifies that the horizontal positioning shall be relative to the right margin of the page.
+	*/
+	RIGHT_MARGIN: "rightMargin"
+};
+/**
+* Vertical Relative Positioning.
+*
+* Specifies the vertical base from which the drawing position is calculated.
+*
+* Reference: https://www.datypic.com/sc/ooxml/t-wp_ST_RelFromV.html
+*
+* ## XSD Schema
+* ```xml
+* <xsd:simpleType name="ST_RelFromV">
+*   <xsd:restriction base="xsd:token">
+*     <xsd:enumeration value="margin"/>
+*     <xsd:enumeration value="page"/>
+*     <xsd:enumeration value="paragraph"/>
+*     <xsd:enumeration value="line"/>
+*     <xsd:enumeration value="topMargin"/>
+*     <xsd:enumeration value="bottomMargin"/>
+*     <xsd:enumeration value="insideMargin"/>
+*     <xsd:enumeration value="outsideMargin"/>
+*   </xsd:restriction>
+* </xsd:simpleType>
+* ```
+*
+* @publicApi
+*/
+var VerticalPositionRelativeFrom = {
+	/**
+	* ## Bottom Margin
+	*
+	* Specifies that the vertical positioning shall be relative to the bottom margin of the current page.
+	*/
+	BOTTOM_MARGIN: "bottomMargin",
+	/**
+	* ## Inside Margin
+	*
+	* Specifies that the vertical positioning shall be relative to the inside margin of the current page.
+	*/
+	INSIDE_MARGIN: "insideMargin",
+	/**
+	* ## Line
+	*
+	* Specifies that the vertical positioning shall be relative to the line containing the anchor character.
+	*/
+	LINE: "line",
+	/**
+	* ## Page Margin
+	*
+	* Specifies that the vertical positioning shall be relative to the page margins.
+	*/
+	MARGIN: "margin",
+	/**
+	* ## Outside Margin
+	*
+	* Specifies that the vertical positioning shall be relative to the outside margin of the current page.
+	*/
+	OUTSIDE_MARGIN: "outsideMargin",
+	/**
+	* ## Page Edge
+	*
+	* Specifies that the vertical positioning shall be relative to the edge of the page.
+	*/
+	PAGE: "page",
+	/**
+	* ## Paragraph
+	*
+	* Specifies that the vertical positioning shall be relative to the paragraph which contains the drawing anchor.
+	*/
+	PARAGRAPH: "paragraph",
+	/**
+	* ## Top Margin
+	*
+	* Specifies that the vertical positioning shall be relative to the top margin of the current page.
+	*/
+	TOP_MARGIN: "topMargin"
+};
+/**
+* # Simple Positioning Coordinates
+*
+* This element specifies the coordinates at which a DrawingML object shall be positioned relative to the top-left edge of its page, when the `simplePos` attribute is specified on the <anchor> element (§5.5.2.3).
+*
+* References:
+* - https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_simplePos_topic_ID0E5K6OB.html
+* - http://officeopenxml.com/drwPicFloating-position.php
+*
+* ## XSD Schema
+*
+* ```xml
+* <xsd:complexType name="CT_Point2D">
+*   <xsd:attribute name="x" type="ST_Coordinate" use="required"/>
+*   <xsd:attribute name="y" type="ST_Coordinate" use="required"/>
+* </xsd:complexType>
+* ```
+*/
+var createSimplePos = () => new BuilderElement({
+	name: "wp:simplePos",
+	attributes: {
+		x: {
+			key: "x",
+			value: 0
+		},
+		y: {
+			key: "y",
+			value: 0
+		}
+	}
+});
+/**
+* # Relative Horizontal/Vertical Alignment
+*
+* This element specifies how a DrawingML object shall be horizontally/vertically aligned relative to the horizontal/vertical alignment base defined by the parent element. Once an alignment base is defined, this element shall determine how the DrawingML object shall be aligned relative to that location.
+*
+* References:
+* - https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_align_topic_ID0EYZZOB.html
+* - https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_align_topic_ID0ET4ZOB.html
+* - http://officeopenxml.com/drwPicFloating-position.php
+*/
+var createAlign = (value) => new BuilderElement({
+	name: "wp:align",
+	children: [value]
+});
+/**
+* # Absolute Position Offset
+*
+* This element specifies an absolute measurement for the positioning of a floating DrawingML object within a WordprocessingML document. This measurement shall be calculated relative to the top left edge of the positioning base specified by the parent element's `relativeFrom` attribute.
+*
+* References:
+* - https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_posOffset_topic_ID0EMG6OB.html
+* - http://officeopenxml.com/drwPicFloating-position.php
+*/
+var createPositionOffset = (offsetValue) => new BuilderElement({
+	name: "wp:posOffset",
+	children: [offsetValue.toString()]
+});
+/**
+* Horizontal position module for floating drawings in WordprocessingML documents.
+*
+* This module provides horizontal positioning for floating drawing objects,
+* specifying the horizontal placement relative to a base element.
+*
+* Reference: http://officeopenxml.com/drwPicFloating-position.php
+*
+* @module
+*/
+/**
+* Creates a horizontal position element for floating drawings.
+*
+* The positionH element specifies the horizontal positioning of a floating
+* object relative to a base element (page, margin, column, etc.).
+*
+* Reference: https://www.datypic.com/sc/ooxml/e-wp_positionH-1.html
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_PosH">
+*   <xsd:choice>
+*     <xsd:element name="align" type="ST_AlignH"/>
+*     <xsd:element name="posOffset" type="ST_PositionOffset"/>
+*   </xsd:choice>
+*   <xsd:attribute name="relativeFrom" type="ST_RelFromH" use="required"/>
+* </xsd:complexType>
+* ```
+*
+* @param options - Horizontal position configuration
+* @returns The positionH XML element
+*
+* @example
+* ```typescript
+* // Align to the left of the page
+* createHorizontalPosition({
+*   relative: HorizontalPositionRelativeFrom.PAGE,
+*   align: HorizontalPositionAlign.LEFT,
+* });
+*
+* // Offset from the margin
+* createHorizontalPosition({
+*   relative: HorizontalPositionRelativeFrom.MARGIN,
+*   offset: 914400, // 1 inch in EMUs
+* });
+* ```
+*/
+var createHorizontalPosition = ({ relative, align, offset }) => new BuilderElement({
+	name: "wp:positionH",
+	attributes: { relativeFrom: {
+		key: "relativeFrom",
+		value: relative !== null && relative !== void 0 ? relative : HorizontalPositionRelativeFrom.PAGE
+	} },
+	children: [(() => {
+		if (align) return createAlign(align);
+		else if (offset !== void 0) return createPositionOffset(offset);
+		else throw new Error("There is no configuration provided for floating position (Align or offset)");
+	})()]
+});
+/**
+* Vertical position module for floating drawings in WordprocessingML documents.
+*
+* This module provides vertical positioning for floating drawing objects,
+* specifying the vertical placement relative to a base element.
+*
+* Reference: http://officeopenxml.com/drwPicFloating-position.php
+*
+* @module
+*/
+/**
+* Creates a vertical position element for floating drawings.
+*
+* The positionV element specifies the vertical positioning of a floating
+* object relative to a base element (page, margin, paragraph, line, etc.).
+*
+* Reference: https://www.datypic.com/sc/ooxml/e-wp_positionV-1.html
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_PosV">
+*   <xsd:choice>
+*     <xsd:element name="align" type="ST_AlignV"/>
+*     <xsd:element name="posOffset" type="ST_PositionOffset"/>
+*   </xsd:choice>
+*   <xsd:attribute name="relativeFrom" type="ST_RelFromV" use="required"/>
+* </xsd:complexType>
+* ```
+*
+* @param options - Vertical position configuration
+* @returns The positionV XML element
+*
+* @example
+* ```typescript
+* // Align to the top of the page
+* createVerticalPosition({
+*   relative: VerticalPositionRelativeFrom.PAGE,
+*   align: VerticalPositionAlign.TOP,
+* });
+*
+* // Offset from the paragraph
+* createVerticalPosition({
+*   relative: VerticalPositionRelativeFrom.PARAGRAPH,
+*   offset: 457200, // 0.5 inch in EMUs
+* });
+* ```
+*/
+var createVerticalPosition = ({ relative, align, offset }) => new BuilderElement({
+	name: "wp:positionV",
+	attributes: { relativeFrom: {
+		key: "relativeFrom",
+		value: relative !== null && relative !== void 0 ? relative : VerticalPositionRelativeFrom.PAGE
+	} },
+	children: [(() => {
+		if (align) return createAlign(align);
+		else if (offset !== void 0) return createPositionOffset(offset);
+		else throw new Error("There is no configuration provided for floating position (Align or offset)");
+	})()]
+});
+/**
+* Extents attributes for DrawingML shapes.
+*
+* This module defines the width and height attributes for shape extents.
+*
+* @module
+*/
+/**
+* Attributes for shape extents (size).
+*
+* Defines the width (cx) and height (cy) in EMUs.
+*
+* ## XSD Schema
+* ```xml
+* <xsd:attribute name="cx" type="ST_PositiveCoordinate" use="required"/>
+* <xsd:attribute name="cy" type="ST_PositiveCoordinate" use="required"/>
+* ```
+*
+* @internal
+*/
+var ExtentsAttributes = class extends XmlAttributeComponent {
+	constructor(..._args) {
+		super(..._args);
+		_defineProperty$1(this, "xmlKeys", {
+			cx: "cx",
+			cy: "cy"
+		});
+	}
+};
+/**
+* Extents (size) element for DrawingML shapes.
+*
+* This module defines the size of a shape or picture in EMUs.
+*
+* Reference: http://officeopenxml.com/drwSp-size.php
+*
+* @module
+*/
+/**
+* Represents the extents (size) of a DrawingML shape.
+*
+* Defines the width and height of the shape in English Metric Units (EMUs).
+* One EMU equals 1/914,400 of an inch.
+*
+* Reference: http://officeopenxml.com/drwSp-size.php
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_PositiveSize2D">
+*   <xsd:attribute name="cx" type="ST_PositiveCoordinate" use="required"/>
+*   <xsd:attribute name="cy" type="ST_PositiveCoordinate" use="required"/>
+* </xsd:complexType>
+* ```
+*
+* @example
+* ```typescript
+* // Create a 1-inch by 1-inch shape
+* const extents = new Extents(914400, 914400);
+* ```
+*/
+var Extents = class extends XmlComponent {
+	constructor(x, y) {
+		super("a:ext");
+		_defineProperty$1(this, "attributes", void 0);
+		this.attributes = new ExtentsAttributes({
+			cx: x,
+			cy: y
+		});
+		this.root.push(this.attributes);
+	}
+};
+/**
+* Offset attributes for DrawingML shapes.
+*
+* This module defines the x and y coordinate attributes for shape offset.
+*
+* @module
+*/
+/**
+* Attributes for shape offset (position).
+*
+* Defines the x and y coordinates in EMUs.
+*
+* ## XSD Schema
+* ```xml
+* <xsd:attribute name="x" type="ST_Coordinate" use="required"/>
+* <xsd:attribute name="y" type="ST_Coordinate" use="required"/>
+* ```
+*
+* @internal
+*/
+var OffsetAttributes = class extends XmlAttributeComponent {
+	constructor(..._args) {
+		super(..._args);
+		_defineProperty$1(this, "xmlKeys", {
+			x: "x",
+			y: "y"
+		});
+	}
+};
+/**
+* Offset (position) element for DrawingML shapes.
+*
+* This module defines the position of a shape or picture in EMUs.
+*
+* Reference: http://officeopenxml.com/drwSp-size.php
+*
+* @module
+*/
+/**
+* Represents the offset (position) of a DrawingML shape.
+*
+* Defines the x and y coordinates of the shape's position in
+* English Metric Units (EMUs). One EMU equals 1/914,400 of an inch.
+*
+* Reference: http://officeopenxml.com/drwSp-size.php
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_Point2D">
+*   <xsd:attribute name="x" type="ST_Coordinate" use="required"/>
+*   <xsd:attribute name="y" type="ST_Coordinate" use="required"/>
+* </xsd:complexType>
+* ```
+*
+* @example
+* ```typescript
+* const offset = new Offset();
+* ```
+*/
+var Offset = class extends XmlComponent {
+	constructor(x, y) {
+		super("a:off");
+		this.root.push(new OffsetAttributes({
+			x: x !== null && x !== void 0 ? x : 0,
+			y: y !== null && y !== void 0 ? y : 0
+		}));
+	}
+};
+/**
+* Attributes for 2D transformation.
+*
+* Defines flip and rotation properties.
+*/
+var FormAttributes = class extends XmlAttributeComponent {
+	constructor(..._args) {
+		super(..._args);
+		_defineProperty$1(this, "xmlKeys", {
+			flipVertical: "flipV",
+			flipHorizontal: "flipH",
+			rotation: "rot"
+		});
+	}
+};
+/**
+* Represents a 2D transformation for DrawingML objects.
+*
+* This element defines how a shape or picture is positioned, sized,
+* rotated, and flipped within the document.
+*
+* Reference: http://officeopenxml.com/drwSp-size.php
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_Transform2D">
+*   <xsd:sequence>
+*     <xsd:element name="off" type="CT_Point2D" minOccurs="0"/>
+*     <xsd:element name="ext" type="CT_PositiveSize2D" minOccurs="0"/>
+*   </xsd:sequence>
+*   <xsd:attribute name="rot" type="ST_Angle" use="optional"/>
+*   <xsd:attribute name="flipH" type="xsd:boolean" use="optional"/>
+*   <xsd:attribute name="flipV" type="xsd:boolean" use="optional"/>
+* </xsd:complexType>
+* ```
+*
+* @example
+* ```typescript
+* const form = new Form({
+*   emus: { x: 914400, y: 914400 },
+*   flip: { horizontal: true, vertical: false },
+*   rotation: 450000 // 7.5 degrees
+* });
+* ```
+*/
+var Form = class extends XmlComponent {
+	constructor(options) {
+		var _options$flip, _options$flip2, _options$offset, _options$offset2;
+		super("a:xfrm");
+		_defineProperty$1(this, "extents", void 0);
+		_defineProperty$1(this, "offset", void 0);
+		this.root.push(new FormAttributes({
+			flipVertical: (_options$flip = options.flip) === null || _options$flip === void 0 ? void 0 : _options$flip.vertical,
+			flipHorizontal: (_options$flip2 = options.flip) === null || _options$flip2 === void 0 ? void 0 : _options$flip2.horizontal,
+			rotation: options.rotation
+		}));
+		this.offset = new Offset((_options$offset = options.offset) === null || _options$offset === void 0 || (_options$offset = _options$offset.emus) === null || _options$offset === void 0 ? void 0 : _options$offset.x, (_options$offset2 = options.offset) === null || _options$offset2 === void 0 || (_options$offset2 = _options$offset2.emus) === null || _options$offset2 === void 0 ? void 0 : _options$offset2.y);
+		this.extents = new Extents(options.emus.x, options.emus.y);
+		this.root.push(this.offset);
+		this.root.push(this.extents);
+	}
+};
+/**
+* No fill element for DrawingML shapes.
+*
+* This module provides the no-fill option for outline and shape fills.
+*
+* @module
+*/
+/**
+* Creates a no-fill element.
+*
+* Specifies that the outline or shape should have no fill applied.
+*
+* ## XSD Schema
+* ```xml
+* <xsd:element name="noFill" type="CT_Empty"/>
+* ```
+*
+* @example
+* ```typescript
+* const noFill = createNoFill();
+* ```
+*/
+var createNoFill = () => new BuilderElement({ name: "a:noFill" });
+/**
+* RGB color element for DrawingML shapes.
+*
+* This module provides RGB color support for solid fills.
+*
+* @module
+*/
+/**
+* Creates an sRGB color element.
+*
+* Specifies a color using RGB hex values.
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_SRgbColor">
+*   <xsd:sequence>
+*     <xsd:group ref="EG_ColorTransform" minOccurs="0" maxOccurs="unbounded"/>
+*   </xsd:sequence>
+*   <xsd:attribute name="val" type="s:ST_HexColorRGB" use="required"/>
+* </xsd:complexType>
+* ```
+*
+* @example
+* ```typescript
+* const redColor = createSolidRgbColor({ value: "FF0000" });
+* const blueColor = createSolidRgbColor({ value: "0000FF" });
+* ```
+*/
+var createSolidRgbColor = (options) => new BuilderElement({
+	name: "a:srgbClr",
+	attributes: { value: {
+		key: "val",
+		value: options.value
+	} }
+});
+/**
+* Creates a scheme color element.
+*
+* Specifies a color using a theme color scheme reference.
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_SchemeColor">
+*   <xsd:sequence>
+*     <xsd:group ref="EG_ColorTransform" minOccurs="0" maxOccurs="unbounded"/>
+*   </xsd:sequence>
+*   <xsd:attribute name="val" type="ST_SchemeColorVal" use="required"/>
+* </xsd:complexType>
+* ```
+*
+* @example
+* ```typescript
+* const accentColor = createSchemeColor({ value: SchemeColor.ACCENT1 });
+* const bgColor = createSchemeColor({ value: SchemeColor.BG1 });
+* ```
+*/
+var createSchemeColor = (options) => new BuilderElement({
+	name: "a:schemeClr",
+	attributes: { value: {
+		key: "val",
+		value: options.value
+	} }
+});
+/**
+* Solid fill element for DrawingML shapes.
+*
+* This module provides solid fill support for outlines and shapes,
+* supporting both RGB and scheme-based colors.
+*
+* @module
+*/
+/**
+* Creates a solid fill element.
+*
+* Specifies a solid color fill using either RGB or scheme colors.
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_SolidColorFillProperties">
+*   <xsd:sequence>
+*     <xsd:group ref="EG_ColorChoice" minOccurs="0"/>
+*     <xsd:group ref="EG_EffectProperties" minOccurs="0"/>
+*   </xsd:sequence>
+* </xsd:complexType>
+* ```
+*
+* @example
+* ```typescript
+* // RGB solid fill
+* const fill = createSolidFill({
+*   type: "rgb",
+*   value: "FF0000"
+* });
+*
+* // Scheme solid fill
+* const schemeFill = createSolidFill({
+*   type: "scheme",
+*   value: SchemeColor.ACCENT1
+* });
+* ```
+*/
+var createSolidFill$1 = (options) => new BuilderElement({
+	name: "a:solidFill",
+	children: [options.type === "rgb" ? createSolidRgbColor(options) : createSchemeColor(options)]
+});
+/**
+* Outline (line) properties for DrawingML shapes.
+*
+* This module provides support for configuring outline properties including
+* width, cap style, compound line types, and fill properties.
+*
+* Reference: http://officeopenxml.com/drwSp-outline.php
+*
+* @module
+*/
+/**
+* Line cap styles for outline endpoints.
+*
+* Defines how the ends of a line are rendered.
+*/
+var LineCap = {
+	/** Round cap style */
+	ROUND: "rnd",
+	/** Square cap style */
+	SQUARE: "sq",
+	/** Flat cap style */
+	FLAT: "flat"
+};
+/**
+* Compound line types for outlines.
+*
+* Defines the structure of compound lines (single, double, etc.).
+*/
+var CompoundLine = {
+	/** Single line */
+	SINGLE: "sng",
+	/** Double line */
+	DOUBLE: "dbl",
+	/** Thick-thin double line */
+	THICK_THIN: "thickThin",
+	/** Thin-thick double line */
+	THIN_THICK: "thinThick",
+	/** Triple line */
+	TRI: "tri"
+};
+/**
+* Pen alignment options for outline positioning.
+*
+* Defines how the outline is aligned relative to the shape edge.
+*/
+var PenAlignment = {
+	/** Center alignment */
+	CENTER: "ctr",
+	/** Inset alignment */
+	INSET: "in"
+};
+/**
+* Creates an outline element for DrawingML shapes.
+*
+* The outline element specifies the line properties for the shape border,
+* including width, cap style, compound line type, alignment, and fill.
+*
+* Reference: http://officeopenxml.com/drwSp-outline.php
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_LineProperties">
+*   <xsd:sequence>
+*     <xsd:group ref="EG_FillProperties" minOccurs="0"/>
+*     <xsd:group ref="EG_LineDashProperties" minOccurs="0"/>
+*     <xsd:group ref="EG_LineJoinProperties" minOccurs="0"/>
+*   </xsd:sequence>
+*   <xsd:attribute name="w" use="optional" type="a:ST_LineWidth"/>
+*   <xsd:attribute name="cap" use="optional" type="ST_LineCap"/>
+*   <xsd:attribute name="cmpd" use="optional" type="ST_CompoundLine"/>
+*   <xsd:attribute name="algn" use="optional" type="ST_PenAlignment"/>
+* </xsd:complexType>
+* ```
+*
+* @example
+* ```typescript
+* // Create outline with RGB color
+* const outline = createOutline({
+*   width: 9525,
+*   cap: "ROUND",
+*   type: "solidFill",
+*   solidFillType: "rgb",
+*   value: "FF0000"
+* });
+* ```
+*/
+var createOutline = (options) => new BuilderElement({
+	name: "a:ln",
+	attributes: {
+		width: {
+			key: "w",
+			value: options.width
+		},
+		cap: {
+			key: "cap",
+			value: options.cap === void 0 ? void 0 : LineCap[options.cap]
+		},
+		compoundLine: {
+			key: "cmpd",
+			value: options.compoundLine === void 0 ? void 0 : CompoundLine[options.compoundLine]
+		},
+		align: {
+			key: "algn",
+			value: options.align === void 0 ? void 0 : PenAlignment[options.align]
+		}
+	},
+	children: [options.type === "noFill" ? createNoFill() : options.solidFillType === "rgb" ? createSolidFill$1({
+		type: "rgb",
+		value: options.value
+	}) : createSolidFill$1({
+		type: "scheme",
+		value: options.value
+	})]
+});
+/**
+* Adjustment values module for preset geometries.
+*
+* This module provides adjustment value lists that can modify the appearance
+* of preset shape geometries.
+*
+* Reference: http://officeopenxml.com/drwSp-prstGeom.php
+*
+* @module
+*/
+/**
+* Represents a list of adjustment values for preset geometry.
+*
+* This element contains a list of shape adjust values that modify the
+* appearance of a preset geometric shape. When empty, default values are used.
+*
+* Reference: http://officeopenxml.com/drwSp-prstGeom.php
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_GeomGuideList">
+*   <xsd:sequence>
+*     <xsd:element name="gd" type="CT_GeomGuide" minOccurs="0" maxOccurs="unbounded"/>
+*   </xsd:sequence>
+* </xsd:complexType>
+* ```
+*
+* @example
+* ```typescript
+* const avLst = new AdjustmentValues();
+* ```
+*/
+var AdjustmentValues = class extends XmlComponent {
+	constructor() {
+		super("a:avLst");
+	}
+};
+/**
+* Preset geometry attributes for DrawingML shapes.
+*
+* This module defines the shape type attribute for preset geometries.
+*
+* @module
+*/
+/**
+* Attributes for preset geometry.
+*
+* Defines the shape type identifier for a preset geometry.
+*
+* ## XSD Schema
+* ```xml
+* <xsd:attribute name="prst" type="ST_ShapeType" use="required"/>
+* ```
+*
+* @internal
+*/
+var PresetGeometryAttributes = class extends XmlAttributeComponent {
+	constructor(..._args) {
+		super(..._args);
+		_defineProperty$1(this, "xmlKeys", { prst: "prst" });
+	}
+};
+/**
+* Preset geometry module for DrawingML shapes.
+*
+* This module provides predefined shape geometries that can be applied
+* to pictures and shapes without requiring custom path definitions.
+*
+* Reference: http://officeopenxml.com/drwSp-prstGeom.php
+*
+* @module
+*/
+/**
+* Represents a preset geometry for a DrawingML shape.
+*
+* This element specifies when a preset geometric shape should be used instead
+* of a custom geometry. It includes a shape preset identifier and optional
+* adjustment values that modify the base shape.
+*
+* Reference: http://officeopenxml.com/drwSp-prstGeom.php
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_PresetGeometry2D">
+*   <xsd:sequence>
+*     <xsd:element name="avLst" type="CT_GeomGuideList" minOccurs="0" maxOccurs="1"/>
+*   </xsd:sequence>
+*   <xsd:attribute name="prst" type="ST_ShapeType" use="required"/>
+* </xsd:complexType>
+* ```
+*
+* @example
+* ```typescript
+* const geometry = new PresetGeometry();
+* ```
+*/
+var PresetGeometry = class extends XmlComponent {
+	constructor() {
+		super("a:prstGeom");
+		this.root.push(new PresetGeometryAttributes({ prst: "rect" }));
+		this.root.push(new AdjustmentValues());
+	}
+};
+/**
+* Shape properties attributes for DrawingML.
+*
+* This module defines attributes for shape properties.
+*
+* @module
+*/
+/**
+* Attributes for shape properties.
+*
+* Defines optional attributes such as black and white mode.
+*
+* ## XSD Schema
+* ```xml
+* <xsd:attribute name="bwMode" type="ST_BlackWhiteMode" use="optional"/>
+* ```
+*
+* @internal
+*/
+var ShapePropertiesAttributes = class extends XmlAttributeComponent {
+	constructor(..._args) {
+		super(..._args);
+		_defineProperty$1(this, "xmlKeys", { bwMode: "bwMode" });
+	}
+};
+/**
+* Represents shape properties for a DrawingML picture.
+*
+* This element defines the visual formatting of a picture, including
+* its transform (size, position, rotation, flip), geometry preset,
+* and outline properties.
+*
+* Reference: http://officeopenxml.com/drwSp-SpPr.php
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_ShapeProperties">
+*   <xsd:sequence>
+*     <xsd:element name="xfrm" type="CT_Transform2D" minOccurs="0"/>
+*     <xsd:group ref="EG_Geometry" minOccurs="0"/>
+*     <xsd:group ref="EG_FillProperties" minOccurs="0"/>
+*     <xsd:element name="ln" type="CT_LineProperties" minOccurs="0"/>
+*     <xsd:group ref="EG_EffectProperties" minOccurs="0"/>
+*     <xsd:element name="scene3d" type="CT_Scene3D" minOccurs="0"/>
+*     <xsd:element name="sp3d" type="CT_Shape3D" minOccurs="0"/>
+*     <xsd:element name="extLst" type="CT_OfficeArtExtensionList" minOccurs="0"/>
+*   </xsd:sequence>
+*   <xsd:attribute name="bwMode" type="ST_BlackWhiteMode" use="optional"/>
+* </xsd:complexType>
+* ```
+*
+* @example
+* ```typescript
+* const shapeProps = new ShapeProperties({
+*   transform: {
+*     emus: { x: 914400, y: 914400 },
+*     flip: { horizontal: false, vertical: false },
+*     rotation: 0
+*   },
+*   outline: {
+*     width: 9525,
+*     type: "solidFill",
+*     solidFillType: "rgb",
+*     value: "FF0000"
+*   }
+* });
+* ```
+*/
+var ShapeProperties = class extends XmlComponent {
+	constructor({ element, outline, solidFill, transform }) {
+		super(`${element}:spPr`);
+		_defineProperty$1(this, "form", void 0);
+		this.root.push(new ShapePropertiesAttributes({ bwMode: "auto" }));
+		this.form = new Form(transform);
+		this.root.push(this.form);
+		this.root.push(new PresetGeometry());
+		if (solidFill) this.root.push(createSolidFill$1(solidFill));
+		else if (outline) this.root.push(createNoFill());
+		if (outline) this.root.push(createOutline(outline));
+	}
+};
+var createBodyProperties = (options = {}) => {
+	var _options$margins, _options$margins2, _options$margins3, _options$margins4;
+	return new BuilderElement({
+		name: "wps:bodyPr",
+		attributes: {
+			lIns: {
+				key: "lIns",
+				value: (_options$margins = options.margins) === null || _options$margins === void 0 ? void 0 : _options$margins.left
+			},
+			rIns: {
+				key: "rIns",
+				value: (_options$margins2 = options.margins) === null || _options$margins2 === void 0 ? void 0 : _options$margins2.right
+			},
+			tIns: {
+				key: "tIns",
+				value: (_options$margins3 = options.margins) === null || _options$margins3 === void 0 ? void 0 : _options$margins3.top
+			},
+			bIns: {
+				key: "bIns",
+				value: (_options$margins4 = options.margins) === null || _options$margins4 === void 0 ? void 0 : _options$margins4.bottom
+			},
+			anchor: {
+				key: "anchor",
+				value: options.verticalAnchor
+			}
+		},
+		children: [...options.noAutoFit ? [new OnOffElement("a:noAutofit", options.noAutoFit)] : []]
+	});
+};
+var createNonVisualShapeProperties = (options = { txBox: "1" }) => new BuilderElement({
+	name: "wps:cNvSpPr",
+	attributes: { txBox: {
+		key: "txBox",
+		value: options.txBox
+	} }
+});
+var createTextBoxContent = (children) => new BuilderElement({
+	name: "w:txbxContent",
+	children: [...children]
+});
+var createWpsTextBox = (children) => new BuilderElement({
+	name: "wps:txbx",
+	children: [createTextBoxContent(children)]
+});
+var createWpsShape = (options) => new BuilderElement({
+	name: "wps:wsp",
+	children: [
+		createNonVisualShapeProperties(options.nonVisualProperties),
+		new ShapeProperties({
+			element: "wps",
+			transform: options.transformation,
+			outline: options.outline,
+			solidFill: options.solidFill
+		}),
+		createWpsTextBox(options.children),
+		createBodyProperties(options.bodyProperties)
+	]
+});
+/**
+* Graphic data attributes module.
+*
+* This module defines the URI attribute that identifies the type
+* of graphical content within a graphicData element.
+*
+* @module
+*/
+/**
+* XML attributes component for graphic data.
+*
+* The URI attribute identifies the schema namespace of the content
+* stored in the graphicData element. For pictures, this is typically
+* "http://schemas.openxmlformats.org/drawingml/2006/picture".
+*
+* @internal
+*/
+var GraphicDataAttributes = class extends XmlAttributeComponent {
+	constructor(..._args) {
+		super(..._args);
+		_defineProperty$1(this, "xmlKeys", { uri: "uri" });
+	}
+};
+/**
+* Creates an SVG blip element for embedding SVG images.
+*
+* This element is a Microsoft Office extension that allows SVG images
+* to be referenced within a blip.
+*
+* @param mediaData - The media data containing the SVG image information
+* @returns An XML component representing the SVG blip element
+* @internal
+*/
+var createSvgBlip = (mediaData) => new BuilderElement({
+	name: "asvg:svgBlip",
+	attributes: {
+		asvg: {
+			key: "xmlns:asvg",
+			value: "http://schemas.microsoft.com/office/drawing/2016/SVG/main"
+		},
+		embed: {
+			key: "r:embed",
+			value: `rId{${mediaData.fileName}}`
+		}
+	}
+});
+/**
+* Creates an extension element for SVG support.
+*
+* This element wraps the SVG blip extension with the appropriate URI
+* to identify it as an SVG extension.
+*
+* @param mediaData - The media data containing the SVG image information
+* @returns An XML component representing the extension element
+* @internal
+*/
+var createExtention = (mediaData) => new BuilderElement({
+	name: "a:ext",
+	attributes: { uri: {
+		key: "uri",
+		value: "{96DAC541-7B7A-43D3-8B79-37D633B846F1}"
+	} },
+	children: [createSvgBlip(mediaData)]
+});
+/**
+* Creates an extension list for SVG images.
+*
+* This element contains the extensions needed to embed SVG images
+* within a blip. It wraps the SVG-specific extension elements.
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_OfficeArtExtensionList">
+*   <xsd:sequence>
+*     <xsd:element name="ext" type="CT_OfficeArtExtension" minOccurs="0" maxOccurs="unbounded"/>
+*   </xsd:sequence>
+* </xsd:complexType>
+* ```
+*
+* @param mediaData - The media data containing the SVG image information
+* @returns An XML component representing the extension list
+*/
+var createExtentionList = (mediaData) => new BuilderElement({
+	name: "a:extLst",
+	children: [createExtention(mediaData)]
+});
+/**
+* Creates a blip element for an image.
+*
+* A blip references the actual image data stored in the document package
+* through a relationship ID. For SVG images, it includes extensions that
+* reference the SVG data.
+*
+* Reference: http://officeopenxml.com/drwPic.php
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_Blip">
+*   <xsd:sequence>
+*     <xsd:choice minOccurs="0" maxOccurs="unbounded">
+*       <xsd:element name="alphaBiLevel" type="CT_AlphaBiLevelEffect"/>
+*       <xsd:element name="alphaCeiling" type="CT_AlphaCeilingEffect"/>
+*       <xsd:element name="alphaFloor" type="CT_AlphaFloorEffect"/>
+*       <xsd:element name="alphaInv" type="CT_AlphaInverseEffect"/>
+*       <xsd:element name="alphaMod" type="CT_AlphaModulateEffect"/>
+*       <xsd:element name="alphaModFix" type="CT_AlphaModulateFixedEffect"/>
+*       <xsd:element name="alphaRepl" type="CT_AlphaReplaceEffect"/>
+*       <xsd:element name="biLevel" type="CT_BiLevelEffect"/>
+*       <xsd:element name="blur" type="CT_BlurEffect"/>
+*       <xsd:element name="clrChange" type="CT_ColorChangeEffect"/>
+*       <xsd:element name="clrRepl" type="CT_ColorReplaceEffect"/>
+*       <xsd:element name="duotone" type="CT_DuotoneEffect"/>
+*       <xsd:element name="fillOverlay" type="CT_FillOverlayEffect"/>
+*       <xsd:element name="grayscl" type="CT_GrayscaleEffect"/>
+*       <xsd:element name="hsl" type="CT_HSLEffect"/>
+*       <xsd:element name="lum" type="CT_LuminanceEffect"/>
+*       <xsd:element name="tint" type="CT_TintEffect"/>
+*     </xsd:choice>
+*     <xsd:element name="extLst" type="CT_OfficeArtExtensionList" minOccurs="0"/>
+*   </xsd:sequence>
+*   <xsd:attribute ref="r:embed"/>
+*   <xsd:attribute ref="r:link"/>
+*   <xsd:attribute name="cstate" type="ST_BlipCompression"/>
+* </xsd:complexType>
+* ```
+*
+* @param mediaData - The media data containing the image information
+* @returns An XML component representing the blip element
+*/
+var createBlip = (mediaData) => new BuilderElement({
+	name: "a:blip",
+	attributes: {
+		embed: {
+			key: "r:embed",
+			value: `rId{${mediaData.type === "svg" ? mediaData.fallback.fileName : mediaData.fileName}}`
+		},
+		cstate: {
+			key: "cstate",
+			value: "none"
+		}
+	},
+	children: mediaData.type === "svg" ? [createExtentionList(mediaData)] : []
+});
+/**
+* Source rectangle module for blip fills.
+*
+* This module defines the portion of an image to use when filling a shape.
+*
+* Reference: http://officeopenxml.com/drwPic.php
+*
+* @module
+*/
+/**
+* Attributes for the source rectangle element.
+*
+* Percentages are stored in thousandths of a percent, as required by the
+* `ST_Percentage` schema type (for example `10000` represents `10%`).
+*
+* @internal
+*/
+var SourceRectangleAttributes = class extends XmlAttributeComponent {
+	constructor(..._args) {
+		super(..._args);
+		_defineProperty$1(this, "xmlKeys", {
+			left: "l",
+			top: "t",
+			right: "r",
+			bottom: "b"
+		});
+	}
+};
+/**
+* Converts a crop percentage to thousandths of a percent.
+*
+* @throws If the percentage isn't a number from 0 to 100
+*/
+var cropValue = (value, edge) => {
+	if (value === void 0) return;
+	if (!(value >= 0 && value <= 100)) throw new Error(`Invalid crop ${edge} ${value}. Expected a number from 0 to 100`);
+	return Math.round(value * 1e3);
+};
+/**
+* Represents a source rectangle for blip fills.
+*
+* This element specifies a portion of the blip (image) to use as the fill.
+* When not specified with attributes, it indicates the entire blip should be used.
+*
+* Reference: http://officeopenxml.com/drwPic.php
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_RelativeRect">
+*   <xsd:attribute name="l" type="ST_Percentage" use="optional" default="0"/>
+*   <xsd:attribute name="t" type="ST_Percentage" use="optional" default="0"/>
+*   <xsd:attribute name="r" type="ST_Percentage" use="optional" default="0"/>
+*   <xsd:attribute name="b" type="ST_Percentage" use="optional" default="0"/>
+* </xsd:complexType>
+* ```
+*
+* @example
+* ```typescript
+* const srcRect = new SourceRectangle({ left: 10, top: 10, right: 10, bottom: 10 });
+* ```
+*/
+var SourceRectangle = class extends XmlComponent {
+	constructor(crop) {
+		super("a:srcRect");
+		if (crop) this.root.push(new SourceRectangleAttributes({
+			left: cropValue(crop.left, "left"),
+			top: cropValue(crop.top, "top"),
+			right: cropValue(crop.right, "right"),
+			bottom: cropValue(crop.bottom, "bottom")
+		}));
+	}
+};
+/**
+* Stretch fill module for blip fills.
+*
+* This module defines how images are stretched to fill shapes.
+*
+* Reference: http://officeopenxml.com/drwPic.php
+*
+* @module
+*/
+/**
+* Represents a fill rectangle for stretch fill mode.
+*
+* This element specifies the rectangular area of the shape to which
+* the blip fill should be stretched.
+*
+* Reference: http://officeopenxml.com/drwPic.php
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_RelativeRect">
+*   <xsd:attribute name="l" type="ST_Percentage" use="optional" default="0"/>
+*   <xsd:attribute name="t" type="ST_Percentage" use="optional" default="0"/>
+*   <xsd:attribute name="r" type="ST_Percentage" use="optional" default="0"/>
+*   <xsd:attribute name="b" type="ST_Percentage" use="optional" default="0"/>
+* </xsd:complexType>
+* ```
+*/
+var FillRectangle = class extends XmlComponent {
+	constructor() {
+		super("a:fillRect");
+	}
+};
+/**
+* Represents a stretch fill mode for blip fills.
+*
+* This element specifies that the blip (image) should be stretched to fill
+* the entire shape. The stretch fill is one of the fill mode properties
+* that determines how an image is applied to a shape.
+*
+* Reference: http://officeopenxml.com/drwPic.php
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_StretchInfoProperties">
+*   <xsd:sequence>
+*     <xsd:element name="fillRect" type="CT_RelativeRect" minOccurs="0" maxOccurs="1"/>
+*   </xsd:sequence>
+* </xsd:complexType>
+* ```
+*
+* @example
+* ```typescript
+* const stretch = new Stretch();
+* ```
+*/
+var Stretch = class extends XmlComponent {
+	constructor() {
+		super("a:stretch");
+		this.root.push(new FillRectangle());
+	}
+};
+/**
+* Represents a blip fill for pictures in DrawingML.
+*
+* This element specifies the type of fill used for a picture. It contains the blip (image)
+* reference, an optional source rectangle, and the fill mode (typically stretch).
+*
+* Reference: http://officeopenxml.com/drwPic.php
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_BlipFillProperties">
+*   <xsd:sequence>
+*     <xsd:element name="blip" type="CT_Blip" minOccurs="0" maxOccurs="1"/>
+*     <xsd:element name="srcRect" type="CT_RelativeRect" minOccurs="0" maxOccurs="1"/>
+*     <xsd:group ref="EG_FillModeProperties" minOccurs="0" maxOccurs="1"/>
+*   </xsd:sequence>
+*   <xsd:attribute name="dpi" type="xsd:unsignedInt" use="optional"/>
+*   <xsd:attribute name="rotWithShape" type="xsd:boolean" use="optional"/>
+* </xsd:complexType>
+* ```
+*
+* @example
+* ```typescript
+* const blipFill = new BlipFill(mediaData);
+* ```
+*/
+var BlipFill = class extends XmlComponent {
+	constructor(mediaData, crop) {
+		super("pic:blipFill");
+		this.root.push(createBlip(mediaData));
+		this.root.push(new SourceRectangle(crop));
+		this.root.push(new Stretch());
+	}
+};
+/**
+* Picture locks attributes module.
+*
+* This module defines the attributes that control locking behavior
+* for picture elements.
+*
+* @module
+*/
+/**
+* Attributes for picture locking properties.
+*
+* Defines the XML attributes that control which operations are forbidden
+* on a picture element.
+*
+* @internal
+*/
+var PicLocksAttributes = class extends XmlAttributeComponent {
+	constructor(..._args) {
+		super(..._args);
+		_defineProperty$1(this, "xmlKeys", {
+			noChangeAspect: "noChangeAspect",
+			noChangeArrowheads: "noChangeArrowheads"
+		});
+	}
+};
+/**
+* Picture locks module.
+*
+* This module provides locking settings for pictures that control
+* which operations are allowed on the picture element.
+*
+* Reference: http://officeopenxml.com/drwPic.php
+*
+* @module
+*/
+/**
+* Represents picture locking properties in DrawingML.
+*
+* This element specifies all locking properties for a picture. These properties
+* inform the generating application about which operations are forbidden on the
+* parent picture object.
+*
+* Reference: http://officeopenxml.com/drwPic.php
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_PictureLocking">
+*   <xsd:sequence>
+*     <xsd:element name="extLst" type="CT_OfficeArtExtensionList" minOccurs="0" maxOccurs="1"/>
+*   </xsd:sequence>
+*   <xsd:attribute name="noGrp" type="xsd:boolean" use="optional" default="false"/>
+*   <xsd:attribute name="noSelect" type="xsd:boolean" use="optional" default="false"/>
+*   <xsd:attribute name="noRot" type="xsd:boolean" use="optional" default="false"/>
+*   <xsd:attribute name="noChangeAspect" type="xsd:boolean" use="optional" default="false"/>
+*   <xsd:attribute name="noMove" type="xsd:boolean" use="optional" default="false"/>
+*   <xsd:attribute name="noResize" type="xsd:boolean" use="optional" default="false"/>
+*   <xsd:attribute name="noEditPoints" type="xsd:boolean" use="optional" default="false"/>
+*   <xsd:attribute name="noAdjustHandles" type="xsd:boolean" use="optional" default="false"/>
+*   <xsd:attribute name="noChangeArrowheads" type="xsd:boolean" use="optional" default="false"/>
+*   <xsd:attribute name="noChangeShapeType" type="xsd:boolean" use="optional" default="false"/>
+*   <xsd:attribute name="noCrop" type="xsd:boolean" use="optional" default="false"/>
+* </xsd:complexType>
+* ```
+*
+* @example
+* ```typescript
+* const locks = new PicLocks();
+* ```
+*/
+var PicLocks = class extends XmlComponent {
+	constructor() {
+		super("a:picLocks");
+		this.root.push(new PicLocksAttributes({
+			noChangeAspect: 1,
+			noChangeArrowheads: 1
+		}));
+	}
+};
+/**
+* Child non-visual picture properties module.
+*
+* This module provides picture-specific non-visual properties including
+* locking settings that control operations on the picture.
+*
+* Reference: http://officeopenxml.com/drwPic.php
+*
+* @module
+*/
+/**
+* Represents non-visual picture drawing properties.
+*
+* This element specifies the non-visual properties specific to a picture.
+* These properties include picture-specific locking settings that control
+* which operations are allowed on the picture.
+*
+* Reference: http://officeopenxml.com/drwPic.php
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_NonVisualPictureProperties">
+*   <xsd:sequence>
+*     <xsd:element name="picLocks" type="CT_PictureLocking" minOccurs="0" maxOccurs="1"/>
+*     <xsd:element name="extLst" type="CT_OfficeArtExtensionList" minOccurs="0" maxOccurs="1"/>
+*   </xsd:sequence>
+*   <xsd:attribute name="preferRelativeResize" type="xsd:boolean" use="optional" default="true"/>
+* </xsd:complexType>
+* ```
+*
+* @example
+* ```typescript
+* const cNvPicPr = new ChildNonVisualProperties();
+* ```
+*/
+var ChildNonVisualProperties = class extends XmlComponent {
+	constructor() {
+		super("pic:cNvPicPr");
+		this.root.push(new PicLocks());
+	}
+};
+/**
+* Non-visual properties attributes module.
+*
+* This module defines the attributes for non-visual drawing properties
+* including ID, name, and description.
+*
+* @module
+*/
+/**
+* Attributes for non-visual drawing properties.
+*
+* Defines the identification and descriptive attributes for DrawingML objects.
+*
+* @internal
+*/
+var NonVisualPropertiesAttributes = class extends XmlAttributeComponent {
+	constructor(..._args) {
+		super(..._args);
+		_defineProperty$1(this, "xmlKeys", {
+			id: "id",
+			name: "name",
+			descr: "descr"
+		});
+	}
+};
+/**
+* Non-visual drawing properties module.
+*
+* This module provides basic metadata for drawing elements including
+* ID, name, description, and hyperlink support.
+*
+* Reference: http://officeopenxml.com/drwPic.php
+*
+* @module
+*/
+/**
+* Represents non-visual drawing properties for pictures.
+*
+* This element specifies non-visual properties for a DrawingML object.
+* These include identification, naming, description, and hyperlink properties.
+*
+* Reference: http://officeopenxml.com/drwPic.php
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_NonVisualDrawingProps">
+*   <xsd:sequence>
+*     <xsd:element name="hlinkClick" type="CT_Hyperlink" minOccurs="0" maxOccurs="1"/>
+*     <xsd:element name="hlinkHover" type="CT_Hyperlink" minOccurs="0" maxOccurs="1"/>
+*     <xsd:element name="extLst" type="CT_OfficeArtExtensionList" minOccurs="0" maxOccurs="1"/>
+*   </xsd:sequence>
+*   <xsd:attribute name="id" type="ST_DrawingElementId" use="required"/>
+*   <xsd:attribute name="name" type="xsd:string" use="required"/>
+*   <xsd:attribute name="descr" type="xsd:string" use="optional" default=""/>
+*   <xsd:attribute name="hidden" type="xsd:boolean" use="optional" default="false"/>
+*   <xsd:attribute name="title" type="xsd:string" use="optional" default=""/>
+* </xsd:complexType>
+* ```
+*
+* @example
+* ```typescript
+* const cNvPr = new NonVisualProperties();
+* ```
+*/
+var NonVisualProperties = class extends XmlComponent {
+	constructor() {
+		super("pic:cNvPr");
+		this.root.push(new NonVisualPropertiesAttributes({
+			id: 0,
+			name: "",
+			descr: ""
+		}));
+	}
+	prepForXml(context) {
+		for (let i = context.stack.length - 1; i >= 0; i--) {
+			const element = context.stack[i];
+			if (!(element instanceof ConcreteHyperlink)) continue;
+			this.root.push(element.createDrawingClick(context, false));
+			break;
+		}
+		const result = super.prepForXml(context);
+		this.root.splice(1);
+		return result;
+	}
+};
+/**
+* Non-visual picture properties module.
+*
+* This module provides metadata and locking settings for pictures
+* that don't affect their visual appearance.
+*
+* Reference: http://officeopenxml.com/drwPic.php
+*
+* @module
+*/
+/**
+* Represents non-visual picture properties.
+*
+* This element specifies non-visual properties for a picture. These properties
+* include metadata like name, description, and locking settings that don't affect
+* the visual appearance of the picture.
+*
+* Reference: http://officeopenxml.com/drwPic.php
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_PictureNonVisual">
+*   <xsd:sequence>
+*     <xsd:element name="cNvPr" type="a:CT_NonVisualDrawingProps" minOccurs="1" maxOccurs="1"/>
+*     <xsd:element name="cNvPicPr" type="a:CT_NonVisualPictureProperties" minOccurs="1" maxOccurs="1"/>
+*   </xsd:sequence>
+* </xsd:complexType>
+* ```
+*
+* @example
+* ```typescript
+* const nvPicPr = new NonVisualPicProperties();
+* ```
+*/
+var NonVisualPicProperties = class extends XmlComponent {
+	constructor() {
+		super("pic:nvPicPr");
+		this.root.push(new NonVisualProperties());
+		this.root.push(new ChildNonVisualProperties());
+	}
+};
+/**
+* Picture attributes module.
+*
+* This module defines the XML namespace attribute for picture elements.
+*
+* @module
+*/
+/**
+* Attributes for picture elements.
+*
+* Defines the XML namespace declaration for picture elements in DrawingML.
+*
+* @internal
+*/
+var PicAttributes = class extends XmlAttributeComponent {
+	constructor(..._args) {
+		super(..._args);
+		_defineProperty$1(this, "xmlKeys", { xmlns: "xmlns:pic" });
+	}
+};
+/**
+* Represents a picture element in DrawingML.
+*
+* A picture contains non-visual properties, image data (blip fill),
+* and shape properties that define how the image is displayed.
+*
+* Reference: http://officeopenxml.com/drwPic.php
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_Picture">
+*   <xsd:sequence>
+*     <xsd:element name="nvPicPr" type="CT_PictureNonVisual"/>
+*     <xsd:element name="blipFill" type="CT_BlipFillProperties"/>
+*     <xsd:element name="spPr" type="a:CT_ShapeProperties"/>
+*   </xsd:sequence>
+* </xsd:complexType>
+* ```
+*
+* @example
+* ```typescript
+* const pic = new Pic({
+*   mediaData: imageData,
+*   transform: { emus: { x: 914400, y: 914400 } },
+*   outline: { color: "000000", width: 9525 }
+* });
+* ```
+*/
+var Pic = class extends XmlComponent {
+	constructor({ mediaData, transform, outline, solidFill, crop }) {
+		super("pic:pic");
+		this.root.push(new PicAttributes({ xmlns: "http://schemas.openxmlformats.org/drawingml/2006/picture" }));
+		this.root.push(new NonVisualPicProperties());
+		this.root.push(new BlipFill(mediaData, crop));
+		this.root.push(new ShapeProperties({
+			element: "pic",
+			transform,
+			outline,
+			solidFill
+		}));
+	}
+};
+var createGroupTransform = (transformation) => {
+	var _transformation$flip, _transformation$flip2, _transformation$offse, _transformation$offse2;
+	return new BuilderElement({
+		name: "a:xfrm",
+		attributes: {
+			flipVertical: {
+				key: "flipV",
+				value: (_transformation$flip = transformation.flip) === null || _transformation$flip === void 0 ? void 0 : _transformation$flip.vertical
+			},
+			flipHorizontal: {
+				key: "flipH",
+				value: (_transformation$flip2 = transformation.flip) === null || _transformation$flip2 === void 0 ? void 0 : _transformation$flip2.horizontal
+			},
+			rotation: {
+				key: "rot",
+				value: transformation.rotation
+			}
+		},
+		children: [
+			new Offset((_transformation$offse = transformation.offset) === null || _transformation$offse === void 0 || (_transformation$offse = _transformation$offse.emus) === null || _transformation$offse === void 0 ? void 0 : _transformation$offse.x, (_transformation$offse2 = transformation.offset) === null || _transformation$offse2 === void 0 || (_transformation$offse2 = _transformation$offse2.emus) === null || _transformation$offse2 === void 0 ? void 0 : _transformation$offse2.y),
+			new Extents(transformation.emus.x, transformation.emus.y),
+			new BuilderElement({
+				name: "a:chOff",
+				attributes: {
+					x: {
+						key: "x",
+						value: 0
+					},
+					y: {
+						key: "y",
+						value: 0
+					}
+				}
+			}),
+			new BuilderElement({
+				name: "a:chExt",
+				attributes: {
+					x: {
+						key: "cx",
+						value: transformation.emus.x
+					},
+					y: {
+						key: "cy",
+						value: transformation.emus.y
+					}
+				}
+			})
+		]
+	});
+};
+var createNonVisualGroupProperties = () => new BuilderElement({ name: "wpg:cNvGrpSpPr" });
+var createWpgGroup = (options) => new BuilderElement({
+	name: "wpg:wgp",
+	children: [
+		createNonVisualGroupProperties(),
+		new BuilderElement({
+			name: "wpg:grpSpPr",
+			children: [createGroupTransform(options.transformation)]
+		}),
+		...options.children
+	]
+});
+/**
+* Represents graphical data within a DrawingML graphic element.
+*
+* GraphicData contains the actual picture, chart, or other graphical
+* content referenced by a graphic element. It uses a URI to identify
+* the type of content being stored.
+*
+* Reference: http://officeopenxml.com/drwPic.php
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_GraphicalObjectData">
+*   <xsd:sequence>
+*     <xsd:any minOccurs="0" maxOccurs="unbounded" processContents="strict"/>
+*   </xsd:sequence>
+*   <xsd:attribute name="uri" type="xsd:token" use="required"/>
+* </xsd:complexType>
+* ```
+*
+* @example
+* ```typescript
+* const graphicData = new GraphicData({
+*   mediaData: imageData,
+*   transform: transformation,
+*   outline: { color: "000000", width: 9525 }
+* });
+* ```
+*/
+var GraphicData = class extends XmlComponent {
+	constructor({ mediaData, transform, outline, solidFill, crop }) {
+		super("a:graphicData");
+		if (mediaData.type === "graphic") {
+			this.root.push(new GraphicDataAttributes({ uri: mediaData.uri }));
+			this.root.push(mediaData.content);
+		} else if (mediaData.type === "wps") {
+			this.root.push(new GraphicDataAttributes({ uri: "http://schemas.microsoft.com/office/word/2010/wordprocessingShape" }));
+			const wps = createWpsShape(_objectSpread2(_objectSpread2({}, mediaData.data), {}, {
+				transformation: transform,
+				outline,
+				solidFill
+			}));
+			this.root.push(wps);
+		} else if (mediaData.type === "wpg") {
+			this.root.push(new GraphicDataAttributes({ uri: "http://schemas.microsoft.com/office/word/2010/wordprocessingGroup" }));
+			const wpg = createWpgGroup({
+				children: mediaData.children.map((child) => {
+					if (child.type === "wps") return createWpsShape(_objectSpread2(_objectSpread2({}, child.data), {}, {
+						transformation: child.transformation,
+						outline: child.outline,
+						solidFill: child.solidFill
+					}));
+					else return new Pic({
+						mediaData: child,
+						transform: child.transformation,
+						outline: child.outline,
+						solidFill: child.solidFill
+					});
+				}),
+				transformation: transform
+			});
+			this.root.push(wpg);
+		} else {
+			this.root.push(new GraphicDataAttributes({ uri: "http://schemas.openxmlformats.org/drawingml/2006/picture" }));
+			const pic = new Pic({
+				mediaData,
+				transform,
+				outline,
+				solidFill,
+				crop
+			});
+			this.root.push(pic);
+		}
+	}
+};
+/**
+* Attributes for the graphic element.
+* @internal
+*/
+var GraphicAttributes = class extends XmlAttributeComponent {
+	constructor(..._args) {
+		super(..._args);
+		_defineProperty$1(this, "xmlKeys", { a: "xmlns:a" });
+	}
+};
+/**
+* Represents a graphic element in DrawingML.
+*
+* Graphic is the container for graphical content such as
+* pictures, shapes, and charts within a drawing.
+*
+* Reference: http://officeopenxml.com/drwPic.php
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_GraphicalObject">
+*   <xsd:sequence>
+*     <xsd:element name="graphicData" type="CT_GraphicalObjectData"/>
+*   </xsd:sequence>
+* </xsd:complexType>
+* ```
+*
+* @example
+* ```typescript
+* const graphic = new Graphic({
+*   mediaData: imageData,
+*   transform: transformation,
+*   outline: { color: "FF0000", width: 9525 }
+* });
+* ```
+*/
+var Graphic = class extends XmlComponent {
+	constructor({ mediaData, transform, outline, solidFill, crop }) {
+		super("a:graphic");
+		_defineProperty$1(this, "data", void 0);
+		this.root.push(new GraphicAttributes({ a: "http://schemas.openxmlformats.org/drawingml/2006/main" }));
+		this.data = new GraphicData({
+			mediaData,
+			transform,
+			outline,
+			solidFill,
+			crop
+		});
+		this.root.push(this.data);
+	}
+};
+/**
+* Enumeration of text wrapping types for floating drawings.
+*
+* Reference: http://officeopenxml.com/drwPicFloating-textWrap.php
+*
+* @publicApi
+*/
+var TextWrappingType = {
+	/** Text doesn't wrap around the drawing. It is drawn in front of or behind the text */
+	NONE: 0,
+	/** Text wraps around the drawing's box */
+	SQUARE: 1,
+	/** Text wraps closely around the drawing's outline */
+	TIGHT: 2,
+	/** Text sits above and below the drawing, not beside it */
+	TOP_AND_BOTTOM: 3,
+	/** Text wraps closely around the drawing's outline, and fills any open space inside it */
+	THROUGH: 4
+};
+/**
+* Enumeration of text wrapping sides for floating drawings.
+*
+* Specifies on which side(s) text can wrap around the drawing.
+*
+* Reference: http://officeopenxml.com/drwPicFloating-textWrap.php
+*
+* @publicApi
+*/
+var TextWrappingSide = {
+	/** Text wraps on both sides of the drawing */
+	BOTH_SIDES: "bothSides",
+	/** Text wraps only on the left side */
+	LEFT: "left",
+	/** Text wraps only on the right side */
+	RIGHT: "right",
+	/** Text wraps on the side with more space */
+	LARGEST: "largest"
+};
+/**
+* Wrap None module for DrawingML text wrapping.
+*
+* This module provides no text wrapping for floating drawings
+* where text does not wrap around the drawing.
+*
+* Reference: http://officeopenxml.com/drwPicFloating-textWrap.php
+*
+* @module
+*/
+/**
+* Creates no text wrapping for a floating drawing.
+*
+* WrapNone causes text to flow behind or in front of the drawing
+* without wrapping around it.
+*
+* Reference: http://officeopenxml.com/drwPicFloating-textWrap.php
+*/
+var createWrapNone = () => new BuilderElement({ name: "wp:wrapNone" });
+/**
+* Wrap Square module for DrawingML text wrapping.
+*
+* This module provides square text wrapping for floating drawings
+* where text wraps around a rectangular bounding box.
+*
+* Reference: http://officeopenxml.com/drwPicFloating-textWrap.php
+*
+* @module
+*/
+/**
+* Creates square text wrapping for a floating drawing.
+*
+* WrapSquare causes text to wrap around the rectangular bounding box
+* of the drawing on the specified side(s).
+*
+* Reference: http://officeopenxml.com/drwPicFloating-textWrap.php
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_WrapSquare">
+*   <xsd:sequence>
+*     <xsd:element name="effectExtent" type="CT_EffectExtent" minOccurs="0"/>
+*   </xsd:sequence>
+*   <xsd:attribute name="wrapText" type="ST_WrapText" use="required"/>
+*   <xsd:attribute name="distT" type="ST_WrapDistance"/>
+*   <xsd:attribute name="distB" type="ST_WrapDistance"/>
+*   <xsd:attribute name="distL" type="ST_WrapDistance"/>
+*   <xsd:attribute name="distR" type="ST_WrapDistance"/>
+* </xsd:complexType>
+* ```
+*/
+var createWrapSquare = (textWrapping, margins = {
+	top: 0,
+	bottom: 0,
+	left: 0,
+	right: 0
+}) => new BuilderElement({
+	name: "wp:wrapSquare",
+	attributes: {
+		wrapText: {
+			key: "wrapText",
+			value: textWrapping.side || TextWrappingSide.BOTH_SIDES
+		},
+		distT: {
+			key: "distT",
+			value: margins.top
+		},
+		distB: {
+			key: "distB",
+			value: margins.bottom
+		},
+		distL: {
+			key: "distL",
+			value: margins.left
+		},
+		distR: {
+			key: "distR",
+			value: margins.right
+		}
+	}
+});
+/**
+* Wrap Tight and Wrap Through modules for DrawingML text wrapping.
+*
+* These provide tight and through text wrapping for floating drawings,
+* where text wraps closely around the outline of the drawing.
+*
+* Reference: http://officeopenxml.com/drwPicFloating-textWrap.php
+*
+* @module
+*/
+var WRAP_POLYGON_SIZE = 21600;
+var createPoint = (name, { x, y }) => new BuilderElement({
+	name,
+	attributes: {
+		x: {
+			key: "x",
+			value: x
+		},
+		y: {
+			key: "y",
+			value: y
+		}
+	}
+});
+/**
+* Creates a wrap polygon around the drawing's box.
+*
+* Word works out the outline to wrap text around when it lays out the page, so the polygon
+* is marked as not edited, and Word replaces it with the drawing's real outline.
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_WrapPath">
+*   <xsd:sequence>
+*     <xsd:element name="start" type="a:CT_Point2D" minOccurs="1" maxOccurs="1"/>
+*     <xsd:element name="lineTo" type="a:CT_Point2D" minOccurs="2" maxOccurs="unbounded"/>
+*   </xsd:sequence>
+*   <xsd:attribute name="edited" type="xsd:boolean" use="optional"/>
+* </xsd:complexType>
+* ```
+*/
+var createWrapPolygon = () => new BuilderElement({
+	name: "wp:wrapPolygon",
+	attributes: { edited: {
+		key: "edited",
+		value: false
+	} },
+	children: [
+		createPoint("wp:start", {
+			x: 0,
+			y: 0
+		}),
+		createPoint("wp:lineTo", {
+			x: 0,
+			y: WRAP_POLYGON_SIZE
+		}),
+		createPoint("wp:lineTo", {
+			x: WRAP_POLYGON_SIZE,
+			y: WRAP_POLYGON_SIZE
+		}),
+		createPoint("wp:lineTo", {
+			x: WRAP_POLYGON_SIZE,
+			y: 0
+		}),
+		createPoint("wp:lineTo", {
+			x: 0,
+			y: 0
+		})
+	]
+});
+var createPolygonWrap = (name, margins = {}, textWrapping) => {
+	var _textWrapping$side;
+	return new BuilderElement({
+		name,
+		attributes: {
+			wrapText: {
+				key: "wrapText",
+				value: (_textWrapping$side = textWrapping === null || textWrapping === void 0 ? void 0 : textWrapping.side) !== null && _textWrapping$side !== void 0 ? _textWrapping$side : TextWrappingSide.BOTH_SIDES
+			},
+			distL: {
+				key: "distL",
+				value: margins.left
+			},
+			distR: {
+				key: "distR",
+				value: margins.right
+			}
+		},
+		children: [createWrapPolygon()]
+	});
+};
+/**
+* Creates tight text wrapping for a floating drawing.
+*
+* WrapTight causes text to wrap closely around the contours
+* of the drawing rather than its rectangular bounding box.
+*
+* Reference: http://officeopenxml.com/drwPicFloating-textWrap.php
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_WrapTight">
+*   <xsd:sequence>
+*     <xsd:element name="wrapPolygon" type="CT_WrapPath"/>
+*   </xsd:sequence>
+*   <xsd:attribute name="wrapText" type="ST_WrapText" use="required"/>
+*   <xsd:attribute name="distL" type="ST_WrapDistance"/>
+*   <xsd:attribute name="distR" type="ST_WrapDistance"/>
+* </xsd:complexType>
+* ```
+*
+* @param margins - The distances from the text on the left and right. The top and bottom aren't written for tight wrapping
+* @param textWrapping - Which sides the text wraps on. Defaults to both
+*/
+var createWrapTight = (margins, textWrapping) => createPolygonWrap("wp:wrapTight", margins, textWrapping);
+/**
+* Creates through text wrapping for a floating drawing.
+*
+* WrapThrough wraps text around the contours of the drawing like WrapTight, and also
+* fills any open space inside the drawing, such as the middle of a ring.
+*
+* Reference: http://officeopenxml.com/drwPicFloating-textWrap.php
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_WrapThrough">
+*   <xsd:sequence>
+*     <xsd:element name="wrapPolygon" type="CT_WrapPath"/>
+*   </xsd:sequence>
+*   <xsd:attribute name="wrapText" type="ST_WrapText" use="required"/>
+*   <xsd:attribute name="distL" type="ST_WrapDistance"/>
+*   <xsd:attribute name="distR" type="ST_WrapDistance"/>
+* </xsd:complexType>
+* ```
+*
+* @param margins - The distances from the text on the left and right. The top and bottom aren't written for through wrapping
+* @param textWrapping - Which sides the text wraps on. Defaults to both
+*/
+var createWrapThrough = (margins, textWrapping) => createPolygonWrap("wp:wrapThrough", margins, textWrapping);
+/**
+* Wrap Top and Bottom module for DrawingML text wrapping.
+*
+* This module provides top-and-bottom text wrapping for floating drawings
+* where text appears above and below the drawing but not beside it.
+*
+* Reference: http://officeopenxml.com/drwPicFloating-textWrap.php
+*
+* @module
+*/
+/**
+* Creates top-and-bottom text wrapping for a floating drawing.
+*
+* WrapTopAndBottom causes text to appear above and below the drawing
+* without wrapping beside it, creating a line break effect.
+*
+* Reference: http://officeopenxml.com/drwPicFloating-textWrap.php
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_WrapTopBottom">
+*   <xsd:sequence>
+*     <xsd:element name="effectExtent" type="CT_EffectExtent" minOccurs="0"/>
+*   </xsd:sequence>
+*   <xsd:attribute name="distT" type="ST_WrapDistance"/>
+*   <xsd:attribute name="distB" type="ST_WrapDistance"/>
+* </xsd:complexType>
+* ```
+*/
+var createWrapTopAndBottom = (margins = {
+	top: 0,
+	bottom: 0
+}) => new BuilderElement({
+	name: "wp:wrapTopAndBottom",
+	attributes: {
+		distT: {
+			key: "distT",
+			value: margins.top
+		},
+		distB: {
+			key: "distB",
+			value: margins.bottom
+		}
+	}
+});
+/**
 * Target mode types for relationships.
 *
 * Indicates whether a relationship target is external to the package.
@@ -20403,6 +22952,53 @@ var createHyperlinkClick = (linkId, hasXmlNs) => new BuilderElement({
 	} })
 });
 /**
+* Non-visual drawing properties (`CT_NonVisualDrawingProps`) of the shapes, pictures and groups inside a drawing:
+* their id, name and alternative text, a link followed when they are clicked, and whether they are decorative.
+*
+* @module
+*/
+var DECORATIVE_EXTENSION_URI = "{C183D7F6-B498-43B3-948B-1728B52AA6E4}";
+/**
+* Creates the extension list that marks a drawing as decorative, as Word's "Mark as decorative" does.
+*
+* ```xml
+* <a:extLst>
+*   <a:ext uri="{C183D7F6-B498-43B3-948B-1728B52AA6E4}">
+*     <adec:decorative xmlns:adec="http://schemas.microsoft.com/office/drawing/2017/decorative" val="1"/>
+*   </a:ext>
+* </a:extLst>
+* ```
+*
+* @param declareNamespace - Declares the DrawingML namespace, for elements outside `a:graphic` such as `wp:docPr`
+*/
+var createDecorativeExtensionList = (declareNamespace) => new BuilderElement({
+	name: "a:extLst",
+	attributes: { namespace: {
+		key: "xmlns:a",
+		value: declareNamespace ? "http://schemas.openxmlformats.org/drawingml/2006/main" : void 0
+	} },
+	children: [new BuilderElement({
+		name: "a:ext",
+		attributes: { uri: {
+			key: "uri",
+			value: DECORATIVE_EXTENSION_URI
+		} },
+		children: [new BuilderElement({
+			name: "adec:decorative",
+			attributes: {
+				namespace: {
+					key: "xmlns:adec",
+					value: "http://schemas.microsoft.com/office/drawing/2017/decorative"
+				},
+				value: {
+					key: "val",
+					value: 1
+				}
+			}
+		})]
+	})]
+});
+/**
 * A link from a drawing to a web address: the `a:hlinkClick` element, and the relationship that holds the address.
 *
 * The relationship is added to the part the drawing is written in (the document, a header or a footer) when it is written.
@@ -20422,6 +23018,669 @@ var DrawingLink = class {
 		if (this.addedTo.has(relationships)) return;
 		this.addedTo.add(relationships);
 		relationships.addRelationship(this.linkId, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink", this.link, TargetModeType.EXTERNAL);
+	}
+};
+/**
+* Document Properties module for DrawingML elements.
+*
+* This module provides non-visual properties for drawing elements,
+* including name, description, and accessibility information.
+*
+* Reference: https://c-rex.net/projects/samples/ooxml/e1/Part4/OOXML_P4_DOCX_docPr_topic_ID0ES32OB.html
+*
+* @module
+*/
+/**
+* Represents non-visual drawing properties in a WordprocessingML document.
+*
+* DocProperties contains metadata about a drawing element such as
+* its name, description (alt text), and title for accessibility.
+*
+* Reference: https://c-rex.net/projects/samples/ooxml/e1/Part4/OOXML_P4_DOCX_docPr_topic_ID0ES32OB.html
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_NonVisualDrawingProps">
+*   <xsd:sequence>
+*     <xsd:element name="hlinkClick" type="CT_Hyperlink" minOccurs="0"/>
+*     <xsd:element name="hlinkHover" type="CT_Hyperlink" minOccurs="0"/>
+*     <xsd:element name="extLst" type="CT_OfficeArtExtensionList" minOccurs="0"/>
+*   </xsd:sequence>
+*   <xsd:attribute name="id" type="ST_DrawingElementId" use="required"/>
+*   <xsd:attribute name="name" type="xsd:string" use="required"/>
+*   <xsd:attribute name="descr" type="xsd:string"/>
+*   <xsd:attribute name="hidden" type="xsd:boolean"/>
+* </xsd:complexType>
+* ```
+*/
+var DocProperties = class extends XmlComponent {
+	constructor({ name = "", description, title, id } = {}, { link, decorative } = {}) {
+		super("wp:docPr");
+		_defineProperty$1(this, "link", void 0);
+		_defineProperty$1(this, "decorative", void 0);
+		const attributes = {
+			id: {
+				key: "id",
+				value: id !== null && id !== void 0 ? id : docPropertiesUniqueNumericId()
+			},
+			name: {
+				key: "name",
+				value: name
+			}
+		};
+		if (description) attributes.description = {
+			key: "descr",
+			value: description
+		};
+		if (title) attributes.title = {
+			key: "title",
+			value: title
+		};
+		this.root.push(new NextAttributeComponent(attributes));
+		this.link = link === void 0 ? void 0 : new DrawingLink(link);
+		this.decorative = decorative;
+	}
+	prepForXml(context) {
+		if (this.link) {
+			this.link.addRelationship(context);
+			this.root.push(this.link.createClick(true));
+		} else for (let i = context.stack.length - 1; i >= 0; i--) {
+			const element = context.stack[i];
+			if (!(element instanceof ConcreteHyperlink)) continue;
+			this.root.push(element.createDrawingClick(context, true));
+			break;
+		}
+		if (this.decorative) this.root.push(createDecorativeExtensionList(true));
+		const result = super.prepForXml(context);
+		this.root.splice(1);
+		return result;
+	}
+};
+/**
+* Effect extent for DrawingML objects.
+*
+* This module provides support for defining additional extent to compensate
+* for drawing effects applied to objects.
+*
+* Reference: https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_effectExtent_topic_ID0E5O3OB.html
+*
+* @module
+*/
+/**
+* Creates an effect extent element.
+*
+* This element specifies the additional extent which shall be added to each
+* edge of the image (top, bottom, left, right) in order to compensate for any
+* drawing effects applied to the DrawingML object.
+*
+* The extent element specifies the size of the actual DrawingML object; however,
+* an object may have effects applied which change its overall size. This element
+* accounts for that additional space.
+*
+* Reference: https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_effectExtent_topic_ID0E5O3OB.html
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_EffectExtent">
+*   <xsd:attribute name="l" type="a:ST_Coordinate" use="required"/>
+*   <xsd:attribute name="t" type="a:ST_Coordinate" use="required"/>
+*   <xsd:attribute name="r" type="a:ST_Coordinate" use="required"/>
+*   <xsd:attribute name="b" type="a:ST_Coordinate" use="required"/>
+* </xsd:complexType>
+* ```
+*
+* @example
+* ```typescript
+* const effectExtent = createEffectExtent({
+*   top: 0,
+*   right: 0,
+*   bottom: 0,
+*   left: 0
+* });
+* ```
+*/
+var createEffectExtent = ({ top, right, bottom, left }) => new BuilderElement({
+	name: "wp:effectExtent",
+	attributes: {
+		top: {
+			key: "t",
+			value: top
+		},
+		right: {
+			key: "r",
+			value: right
+		},
+		bottom: {
+			key: "b",
+			value: bottom
+		},
+		left: {
+			key: "l",
+			value: left
+		}
+	}
+});
+/**
+* Extent (size) for DrawingML objects.
+*
+* This module provides support for defining the size of DrawingML objects
+* in inline drawings.
+*
+* Reference: https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_extent_topic_ID0EQB4OB.html
+*
+* @module
+*/
+/**
+* The largest width or height, in EMUs, Word opens a drawing at. The standard allows `ST_PositiveCoordinate` up to
+* 27273042316900, but Word and PowerPoint restrict it to 2147483647 and won't open a document with a larger drawing.
+*
+* Reference: [MS-OI29500] Part 1 Section 20.1.10.42, ST_PositiveCoordinate
+*/
+var MAX_EXTENT = 2147483647;
+var EMUS_PER_PIXEL$1 = 9525;
+var checkExtent = (dimension, value) => {
+	if (value !== void 0 && value > MAX_EXTENT) throw new Error(`Invalid drawing ${dimension} ${value} EMUs (${Math.round(value / EMUS_PER_PIXEL$1)} pixels). Word won't open a drawing with a ${dimension} over ${MAX_EXTENT} EMUs (${Math.floor(MAX_EXTENT / EMUS_PER_PIXEL$1)} pixels). Sizes such as an ImageRun's transformation are in pixels, not EMUs`);
+	return value;
+};
+/**
+* Creates an extent element for inline drawings.
+*
+* This element specifies the extents of the parent DrawingML object within
+* the document (i.e. its final height and width).
+*
+* Reference: https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_extent_topic_ID0EQB4OB.html
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_PositiveSize2D">
+*   <xsd:attribute name="cx" type="ST_PositiveCoordinate" use="required"/>
+*   <xsd:attribute name="cy" type="ST_PositiveCoordinate" use="required"/>
+* </xsd:complexType>
+* ```
+*
+* @example
+* ```typescript
+* // Create a 1-inch by 1-inch extent
+* const extent = createExtent({
+*   x: 914400,
+*   y: 914400
+* });
+* ```
+*
+* @throws Error if the width or height is over 2147483647 EMUs, which Word won't open
+*/
+var createExtent = ({ x, y }) => new BuilderElement({
+	name: "wp:extent",
+	attributes: {
+		x: {
+			key: "cx",
+			value: checkExtent("width", x)
+		},
+		y: {
+			key: "cy",
+			value: checkExtent("height", y)
+		}
+	}
+});
+/**
+* Attributes for graphic frame locking properties.
+*
+* Defines the XML attributes that control which operations are forbidden
+* on a graphic frame element.
+*/
+var GraphicFrameLockAttributes = class extends XmlAttributeComponent {
+	constructor(..._args) {
+		super(..._args);
+		_defineProperty$1(this, "xmlKeys", {
+			xmlns: "xmlns:a",
+			noChangeAspect: "noChangeAspect"
+		});
+	}
+};
+/**
+* Represents graphic frame locking properties in DrawingML.
+*
+* This element specifies all locking properties for a graphic frame. These properties
+* inform the generating application about which operations are forbidden on the parent
+* graphic frame.
+*
+* Reference: http://officeopenxml.com/drwPic.php
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_GraphicalObjectFrameLocking">
+*   <xsd:sequence>
+*     <xsd:element name="extLst" type="CT_OfficeArtExtensionList" minOccurs="0" maxOccurs="1"/>
+*   </xsd:sequence>
+*   <xsd:attribute name="noGrp" type="xsd:boolean" use="optional"/>
+*   <xsd:attribute name="noDrilldown" type="xsd:boolean" use="optional"/>
+*   <xsd:attribute name="noSelect" type="xsd:boolean" use="optional"/>
+*   <xsd:attribute name="noChangeAspect" type="xsd:boolean" use="optional"/>
+*   <xsd:attribute name="noMove" type="xsd:boolean" use="optional"/>
+*   <xsd:attribute name="noResize" type="xsd:boolean" use="optional"/>
+* </xsd:complexType>
+* ```
+*
+* @example
+* ```typescript
+* const locks = new GraphicFrameLocks();
+* ```
+*/
+var GraphicFrameLocks = class extends XmlComponent {
+	constructor() {
+		super("a:graphicFrameLocks");
+		this.root.push(new GraphicFrameLockAttributes({
+			xmlns: "http://schemas.openxmlformats.org/drawingml/2006/main",
+			noChangeAspect: 1
+		}));
+	}
+};
+/**
+* # Common DrawingML Non-Visual Properties
+*
+* This element specifies common non-visual DrawingML object properties for the parent DrawingML object. These properties are specified as child elements of this element.
+*
+* References:
+* - https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_cNvGraphicFramePr_topic_ID0E6U2OB.html
+*
+* ## XSD Schema
+*
+* ```xml
+* <xsd:complexType name="CT_NonVisualGraphicFrameProperties">
+*   <xsd:sequence>
+*     <xsd:element name="graphicFrameLocks" type="CT_GraphicalObjectFrameLocking" minOccurs="0" maxOccurs="1"/>
+*     <xsd:element name="extLst" type="CT_OfficeArtExtensionList" minOccurs="0" maxOccurs="1"/>
+*   </xsd:sequence>
+* </xsd:complexType>
+* ```
+*
+* @param lockAspectRatio - Whether Word keeps the drawing's aspect ratio when it is resized
+*/
+var createGraphicFrameProperties = (lockAspectRatio = true) => new BuilderElement({
+	name: "wp:cNvGraphicFramePr",
+	children: lockAspectRatio ? [new GraphicFrameLocks()] : []
+});
+/**
+* Anchor attributes module for DrawingML floating elements.
+*
+* This module defines the attributes for anchored/floating drawings,
+* controlling positioning, z-order, and wrapping behavior.
+*
+* @module
+*/
+/**
+* XML attributes component for anchored drawings.
+*
+* Maps the IAnchorAttributes to XML attribute names for the wp:anchor element.
+*
+* @internal
+*/
+var AnchorAttributes = class extends XmlAttributeComponent {
+	constructor(..._args) {
+		super(..._args);
+		_defineProperty$1(this, "xmlKeys", {
+			distT: "distT",
+			distB: "distB",
+			distL: "distL",
+			distR: "distR",
+			allowOverlap: "allowOverlap",
+			behindDoc: "behindDoc",
+			layoutInCell: "layoutInCell",
+			locked: "locked",
+			relativeHeight: "relativeHeight",
+			simplePos: "simplePos"
+		});
+	}
+};
+/**
+* Represents an anchored/floating drawing in a WordprocessingML document.
+*
+* Anchored drawings can be positioned relative to the page, margin, column,
+* paragraph, character, or line. They support text wrapping options.
+*
+* Reference: http://officeopenxml.com/drwPicFloating.php
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_Anchor">
+*   <xsd:sequence>
+*     <xsd:element name="simplePos" type="a:CT_Point2D"/>
+*     <xsd:element name="positionH" type="CT_PosH"/>
+*     <xsd:element name="positionV" type="CT_PosV"/>
+*     <xsd:element name="extent" type="a:CT_PositiveSize2D"/>
+*     <xsd:element name="effectExtent" type="CT_EffectExtent" minOccurs="0"/>
+*     <xsd:group ref="EG_WrapType"/>
+*     <xsd:element name="docPr" type="a:CT_NonVisualDrawingProps"/>
+*     <xsd:element name="cNvGraphicFramePr" type="a:CT_NonVisualGraphicFrameProperties" minOccurs="0"/>
+*     <xsd:element ref="a:graphic"/>
+*   </xsd:sequence>
+*   <xsd:attribute name="distT" type="ST_WrapDistance"/>
+*   <xsd:attribute name="distB" type="ST_WrapDistance"/>
+*   <xsd:attribute name="distL" type="ST_WrapDistance"/>
+*   <xsd:attribute name="distR" type="ST_WrapDistance"/>
+*   <xsd:attribute name="simplePos" type="xsd:boolean"/>
+*   <xsd:attribute name="relativeHeight" type="xsd:unsignedInt" use="required"/>
+*   <xsd:attribute name="behindDoc" type="xsd:boolean" use="required"/>
+*   <xsd:attribute name="locked" type="xsd:boolean" use="required"/>
+*   <xsd:attribute name="layoutInCell" type="xsd:boolean" use="required"/>
+*   <xsd:attribute name="hidden" type="xsd:boolean"/>
+*   <xsd:attribute name="allowOverlap" type="xsd:boolean" use="required"/>
+* </xsd:complexType>
+* ```
+*/
+var Anchor = class extends XmlComponent {
+	constructor({ mediaData, transform, drawingOptions }) {
+		var _drawingOptions$effec;
+		super("wp:anchor");
+		const floating = _objectSpread2({
+			allowOverlap: true,
+			behindDocument: false,
+			lockAnchor: false,
+			layoutInCell: true,
+			verticalPosition: {},
+			horizontalPosition: {}
+		}, drawingOptions.floating);
+		this.root.push(new AnchorAttributes({
+			distT: floating.margins ? floating.margins.top || 0 : 0,
+			distB: floating.margins ? floating.margins.bottom || 0 : 0,
+			distL: floating.margins ? floating.margins.left || 0 : 0,
+			distR: floating.margins ? floating.margins.right || 0 : 0,
+			simplePos: "0",
+			allowOverlap: floating.allowOverlap === true ? "1" : "0",
+			behindDoc: floating.behindDocument === true ? "1" : "0",
+			locked: floating.lockAnchor === true ? "1" : "0",
+			layoutInCell: floating.layoutInCell === true ? "1" : "0",
+			relativeHeight: floating.zIndex ? floating.zIndex : transform.emus.y
+		}));
+		this.root.push(createSimplePos());
+		this.root.push(createHorizontalPosition(floating.horizontalPosition));
+		this.root.push(createVerticalPosition(floating.verticalPosition));
+		this.root.push(createExtent({
+			x: transform.emus.x,
+			y: transform.emus.y
+		}));
+		this.root.push(createEffectExtent((_drawingOptions$effec = drawingOptions.effectExtent) !== null && _drawingOptions$effec !== void 0 ? _drawingOptions$effec : {
+			top: 0,
+			right: 0,
+			bottom: 0,
+			left: 0
+		}));
+		if (drawingOptions.floating !== void 0 && drawingOptions.floating.wrap !== void 0) switch (drawingOptions.floating.wrap.type) {
+			case TextWrappingType.SQUARE:
+				this.root.push(createWrapSquare(drawingOptions.floating.wrap, drawingOptions.floating.margins));
+				break;
+			case TextWrappingType.TIGHT:
+				this.root.push(createWrapTight(drawingOptions.floating.margins, drawingOptions.floating.wrap));
+				break;
+			case TextWrappingType.THROUGH:
+				this.root.push(createWrapThrough(drawingOptions.floating.margins, drawingOptions.floating.wrap));
+				break;
+			case TextWrappingType.TOP_AND_BOTTOM:
+				this.root.push(createWrapTopAndBottom(drawingOptions.floating.margins));
+				break;
+			case TextWrappingType.NONE:
+			default: this.root.push(createWrapNone());
+		}
+		else this.root.push(createWrapNone());
+		this.root.push(new DocProperties(drawingOptions.docProperties, {
+			link: drawingOptions.link,
+			decorative: drawingOptions.decorative
+		}));
+		this.root.push(createGraphicFrameProperties(mediaData.type !== "graphic" || mediaData.lockAspectRatio !== false));
+		this.root.push(new Graphic({
+			mediaData,
+			transform,
+			outline: drawingOptions.outline,
+			solidFill: drawingOptions.solidFill,
+			crop: drawingOptions.crop
+		}));
+	}
+};
+var createInline = ({ mediaData, transform, docProperties, outline, solidFill, crop, effectExtent, link, decorative }) => {
+	var _outline$width, _outline$width2, _outline$width3, _outline$width4;
+	return new BuilderElement({
+		name: "wp:inline",
+		attributes: {
+			distanceTop: {
+				key: "distT",
+				value: 0
+			},
+			distanceBottom: {
+				key: "distB",
+				value: 0
+			},
+			distanceLeft: {
+				key: "distL",
+				value: 0
+			},
+			distanceRight: {
+				key: "distR",
+				value: 0
+			}
+		},
+		children: [
+			createExtent({
+				x: transform.emus.x,
+				y: transform.emus.y
+			}),
+			createEffectExtent(effectExtent !== null && effectExtent !== void 0 ? effectExtent : outline ? {
+				top: ((_outline$width = outline.width) !== null && _outline$width !== void 0 ? _outline$width : 9525) * 2,
+				right: ((_outline$width2 = outline.width) !== null && _outline$width2 !== void 0 ? _outline$width2 : 9525) * 2,
+				bottom: ((_outline$width3 = outline.width) !== null && _outline$width3 !== void 0 ? _outline$width3 : 9525) * 2,
+				left: ((_outline$width4 = outline.width) !== null && _outline$width4 !== void 0 ? _outline$width4 : 9525) * 2
+			} : {
+				top: 0,
+				right: 0,
+				bottom: 0,
+				left: 0
+			}),
+			new DocProperties(docProperties, {
+				link,
+				decorative
+			}),
+			createGraphicFrameProperties(mediaData.type !== "graphic" || mediaData.lockAspectRatio !== false),
+			new Graphic({
+				mediaData,
+				transform,
+				outline,
+				solidFill,
+				crop
+			})
+		]
+	});
+};
+/**
+* Represents a drawing element in a WordprocessingML document.
+*
+* Drawings can be either inline (positioned as part of the text flow) or
+* anchored (positioned relative to the page, column, or paragraph).
+*
+* Reference: http://officeopenxml.com/drwOverview.php
+*
+* ## XSD Schema
+* ```xml
+* <xsd:complexType name="CT_Drawing">
+*   <xsd:choice minOccurs="1" maxOccurs="unbounded">
+*     <xsd:element ref="wp:anchor" minOccurs="0"/>
+*     <xsd:element ref="wp:inline" minOccurs="0"/>
+*   </xsd:choice>
+* </xsd:complexType>
+* ```
+*/
+var Drawing = class extends XmlComponent {
+	constructor(imageData, drawingOptions = {}) {
+		super("w:drawing");
+		if (!drawingOptions.floating) this.root.push(createInline({
+			mediaData: imageData,
+			transform: imageData.transformation,
+			docProperties: drawingOptions.docProperties,
+			outline: drawingOptions.outline,
+			solidFill: drawingOptions.solidFill,
+			crop: drawingOptions.crop,
+			effectExtent: drawingOptions.effectExtent,
+			link: drawingOptions.link,
+			decorative: drawingOptions.decorative
+		}));
+		else this.root.push(new Anchor({
+			mediaData: imageData,
+			transform: imageData.transformation,
+			drawingOptions
+		}));
+	}
+};
+var convertDataURIToBinary = (dataURI) => {
+	const base64Index = dataURI.indexOf(";base64,");
+	const base64IndexWithOffset = base64Index === -1 ? 0 : base64Index + 8;
+	return new Uint8Array(atob(dataURI.substring(base64IndexWithOffset)).split("").map((c) => c.charCodeAt(0)));
+};
+var standardizeData = (data) => typeof data === "string" ? convertDataURIToBinary(data) : data;
+var SIGNATURES = [
+	["png", [
+		137,
+		80,
+		78,
+		71,
+		13,
+		10,
+		26,
+		10
+	]],
+	["jpg", [
+		255,
+		216,
+		255
+	]],
+	["gif", [
+		71,
+		73,
+		70,
+		56,
+		55,
+		97
+	]],
+	["gif", [
+		71,
+		73,
+		70,
+		56,
+		57,
+		97
+	]],
+	["bmp", [66, 77]]
+];
+/**
+* The format of an image given without a `type`, read from the bytes its file starts with. Without one, its file in the
+* package would be named `.undefined`, which has no content type, so Word reports the document as unreadable.
+*/
+var imageTypeOf = ({ type, data }, name) => {
+	if (type !== void 0) return type;
+	const standardized = standardizeData(data);
+	const bytes = ArrayBuffer.isView(standardized) ? new Uint8Array(standardized.buffer, standardized.byteOffset, standardized.byteLength) : new Uint8Array(standardized);
+	const signature = SIGNATURES.find(([, start]) => start.every((byte, index) => bytes[index] === byte));
+	if (signature === void 0) throw new Error(`${name}: type isn't given, and data isn't a PNG, JPEG, GIF or BMP file to read it from. Give its type`);
+	return signature[0];
+};
+var createImageData = (options, key) => ({
+	data: standardizeData(options.data),
+	fileName: key,
+	transformation: {
+		pixels: {
+			x: Math.round(options.transformation.width),
+			y: Math.round(options.transformation.height)
+		},
+		emus: {
+			x: Math.round(options.transformation.width * 9525),
+			y: Math.round(options.transformation.height * 9525)
+		},
+		flip: options.transformation.flip,
+		rotation: options.transformation.rotation ? options.transformation.rotation * 6e4 : void 0
+	}
+});
+/** The media data of a PNG, JPEG, GIF or BMP image, as an image of its own or as an SVG image's fallback */
+var createRegularImageData = (options, transformation, name) => {
+	const type = imageTypeOf(options, name);
+	return _objectSpread2({ type }, createImageData(_objectSpread2(_objectSpread2({}, options), {}, { transformation }), `${hashedId(options.data)}.${type}`));
+};
+var createDeletion = ({ id, author, date }, run) => new BuilderElement({
+	name: "w:del",
+	attributes: {
+		id: {
+			key: "w:id",
+			value: id
+		},
+		author: {
+			key: "w:author",
+			value: author
+		},
+		date: {
+			key: "w:date",
+			value: date
+		}
+	},
+	children: [run]
+});
+/**
+* Represents an image in a WordprocessingML document.
+*
+* ImageRun embeds an image within a run, supporting various formats
+* including JPG, PNG, GIF, BMP, and SVG. Optionally wraps the run in
+* `<w:ins>` or `<w:del>`, or both, for track-change insertion/deletion markup.
+*
+* Reference: http://officeopenxml.com/drwPicInline.php
+*
+* @publicApi
+*
+* @example
+* ```typescript
+* new ImageRun({
+*   data: fs.readFileSync("./image.png"),
+*   transformation: {
+*     width: 100,
+*     height: 100,
+*   },
+*   type: "png",
+* });
+* ```
+*/
+var ImageRun = class extends XmlComponent {
+	constructor(options) {
+		var _options$insertion;
+		const imageData = options.type === "svg" ? _objectSpread2(_objectSpread2({ type: options.type }, createImageData(options, `${hashedId(options.data)}.svg`)), {}, { fallback: createRegularImageData(options.fallback, options.transformation, "ImageRun fallback") }) : createRegularImageData(options, options.transformation, "ImageRun");
+		const drawing = new Drawing(imageData, {
+			floating: options.floating,
+			docProperties: options.altText,
+			outline: options.outline,
+			solidFill: options.solidFill,
+			crop: options.crop,
+			link: options.link,
+			decorative: options.decorative
+		});
+		const properties = new RunProperties(options.run);
+		const revision = (_options$insertion = options.insertion) !== null && _options$insertion !== void 0 ? _options$insertion : options.deletion;
+		const rootName = options.insertion ? "w:ins" : options.deletion ? "w:del" : "w:r";
+		super(rootName);
+		_defineProperty$1(this, "imageData", void 0);
+		if (revision) {
+			this.root.push(new ChangeAttributes({
+				id: revision.id,
+				author: revision.author,
+				date: revision.date
+			}));
+			const run = new BuilderElement({
+				name: "w:r",
+				children: [properties, drawing]
+			});
+			this.addChildElement(options.insertion && options.deletion ? createDeletion(options.deletion, run) : run);
+		} else {
+			this.root.push(properties);
+			this.root.push(drawing);
+		}
+		this.imageData = imageData;
+	}
+	prepForXml(context) {
+		context.file.Media.addImage(this.imageData.fileName, this.imageData);
+		if (this.imageData.type === "svg") context.file.Media.addImage(this.imageData.fallback.fileName, this.imageData.fallback);
+		return super.prepForXml(context);
 	}
 };
 var LARGEST_ROMAN = 32767;
@@ -37127,8 +40386,54 @@ function triggerDownload(blob, filename) {
 	document.body.removeChild(link);
 	setTimeout(() => URL.revokeObjectURL(url), 1e3);
 }
-async function exportExamToDocx(exam) {
+function createFourLinePngBytes() {
+	const scale = 3;
+	const w = 336;
+	const h = 114;
+	const canvas = document.createElement("canvas");
+	canvas.width = w;
+	canvas.height = h;
+	const ctx = canvas.getContext("2d");
+	if (ctx) {
+		ctx.clearRect(0, 0, w, h);
+		ctx.strokeStyle = "#9ca3af";
+		ctx.lineWidth = 3;
+		ctx.setLineDash([]);
+		ctx.beginPath();
+		ctx.moveTo(0, 6);
+		ctx.lineTo(w, 6);
+		ctx.stroke();
+		ctx.strokeStyle = "#6b7280";
+		ctx.lineWidth = 3;
+		ctx.setLineDash([9, 2.5 * scale]);
+		ctx.beginPath();
+		ctx.moveTo(0, 39);
+		ctx.lineTo(w, 39);
+		ctx.stroke();
+		ctx.strokeStyle = "#111827";
+		ctx.lineWidth = 1.5 * scale;
+		ctx.setLineDash([]);
+		ctx.beginPath();
+		ctx.moveTo(0, 72);
+		ctx.lineTo(w, 72);
+		ctx.stroke();
+		ctx.strokeStyle = "#9ca3af";
+		ctx.lineWidth = 3;
+		ctx.setLineDash([]);
+		ctx.beginPath();
+		ctx.moveTo(0, 105);
+		ctx.lineTo(w, 105);
+		ctx.stroke();
+	}
+	const base64 = canvas.toDataURL("image/png").split(",")[1] || "";
+	const binary = atob(base64);
+	const bytes = new Uint8Array(binary.length);
+	for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+	return bytes;
+}
+async function exportExamToDocx(exam, zhToEnStyle = "underline") {
 	const usableWidthTwips = convertMillimetersToTwip(178);
+	const fourLinePngBytes = zhToEnStyle === "four-line" ? createFourLinePngBytes() : null;
 	const children = [];
 	for (const subId of exam.header.order) if (subId === "title") children.push(new Paragraph({
 		alignment: mapAlignment(exam.header.titleAlign),
@@ -37248,111 +40553,150 @@ async function exportExamToDocx(exam) {
 			}));
 			return;
 		}
-		const bands = buildQuestionBands(section.questions, exam.columnsPerRow);
+		const layoutMode = section.layoutMode ?? "horizontal";
+		const useFourLine = sectionId === "zhToEn" && zhToEnStyle === "four-line" && fourLinePngBytes !== null;
+		const bands = buildQuestionBands(section.questions, exam.columnsPerRow, layoutMode);
 		const colCount = exam.columnsPerRow;
 		const colWidth = Math.floor(usableWidthTwips / colCount);
-		const rows = [];
-		bands.forEach((band) => {
-			const maxRowsInBand = Math.max(...band.columns.map((col) => col.length), 1);
-			for (let r = 0; r < maxRowsInBand; r++) {
-				const cells = [];
-				for (let c = 0; c < colCount; c++) {
-					const item = band.columns[c]?.[r];
-					if (!item) cells.push(new TableCell({
+		const buildRowFromColumns = (columns, r) => {
+			const cells = [];
+			for (let c = 0; c < colCount; c++) {
+				const item = columns[c]?.[r];
+				if (!item) cells.push(new TableCell({
+					width: {
+						size: colWidth,
+						type: WidthType.DXA
+					},
+					borders: INVISIBLE_CELL_BORDERS,
+					margins: {
+						top: 60,
+						bottom: 80,
+						left: 40,
+						right: 100
+					},
+					children: [new Paragraph({ children: [] })]
+				}));
+				else {
+					const promptLabel = item.question.text.trim() || "________";
+					const blankRun = useFourLine ? new ImageRun({
+						data: fourLinePngBytes,
+						transformation: {
+							width: 112,
+							height: 38
+						},
+						type: "png"
+					}) : new TextRun({
+						text: "\xA0".repeat(14),
+						underline: {
+							type: UnderlineType.SINGLE,
+							color: "000000"
+						},
+						size: 22,
+						font: {
+							name: "Courier New",
+							eastAsia: "Courier New"
+						}
+					});
+					cells.push(new TableCell({
 						width: {
 							size: colWidth,
 							type: WidthType.DXA
 						},
 						borders: INVISIBLE_CELL_BORDERS,
-						margins: {
+						margins: useFourLine ? {
+							top: 90,
+							bottom: 110,
+							left: 40,
+							right: 100
+						} : {
 							top: 60,
-							bottom: 80,
+							bottom: 90,
 							left: 40,
 							right: 100
 						},
-						children: [new Paragraph({ children: [] })]
+						children: [new Paragraph({
+							spacing: {
+								before: 0,
+								after: 0,
+								line: useFourLine ? 360 : 300
+							},
+							children: [
+								new TextRun({
+									text: `${item.number}. `,
+									bold: true,
+									size: 22,
+									color: "000000",
+									font: {
+										name: "Plus Jakarta Sans",
+										eastAsia: "Microsoft JhengHei"
+									}
+								}),
+								new TextRun({
+									text: `${promptLabel}：`,
+									size: 22,
+									color: "000000",
+									font: {
+										name: "Plus Jakarta Sans",
+										eastAsia: "Microsoft JhengHei"
+									}
+								}),
+								blankRun,
+								new TextRun({
+									text: ` (${formatScore(item.question.score)}分)`,
+									size: 18,
+									color: "374151",
+									font: {
+										name: "Plus Jakarta Sans",
+										eastAsia: "Microsoft JhengHei"
+									}
+								})
+							]
+						})]
 					}));
-					else {
-						const promptLabel = item.question.text.trim() || "________";
-						cells.push(new TableCell({
-							width: {
-								size: colWidth,
-								type: WidthType.DXA
-							},
-							borders: INVISIBLE_CELL_BORDERS,
-							margins: {
-								top: 60,
-								bottom: 90,
-								left: 40,
-								right: 100
-							},
-							children: [new Paragraph({
-								spacing: {
-									before: 0,
-									after: 0,
-									line: 300
-								},
-								children: [
-									new TextRun({
-										text: `${item.number}. `,
-										bold: true,
-										size: 22,
-										color: "000000",
-										font: {
-											name: "Plus Jakarta Sans",
-											eastAsia: "Microsoft JhengHei"
-										}
-									}),
-									new TextRun({
-										text: `${promptLabel}：`,
-										size: 22,
-										color: "000000",
-										font: {
-											name: "Plus Jakarta Sans",
-											eastAsia: "Microsoft JhengHei"
-										}
-									}),
-									new TextRun({
-										text: "\xA0".repeat(14),
-										underline: {
-											type: UnderlineType.SINGLE,
-											color: "000000"
-										},
-										size: 22,
-										font: {
-											name: "Courier New",
-											eastAsia: "Courier New"
-										}
-									}),
-									new TextRun({
-										text: ` (${formatScore(item.question.score)}分)`,
-										size: 18,
-										color: "374151",
-										font: {
-											name: "Plus Jakarta Sans",
-											eastAsia: "Microsoft JhengHei"
-										}
-									})
-								]
-							})]
-						}));
-					}
 				}
-				rows.push(new TableRow({
-					cantSplit: true,
-					children: cells
-				}));
 			}
+			return new TableRow({
+				cantSplit: true,
+				children: cells
+			});
+		};
+		if (layoutMode === "vertical") bands.forEach((band, bandIdx) => {
+			const maxRowsInBand = Math.max(...band.columns.map((col) => col.length), 1);
+			const rows = [];
+			for (let r = 0; r < maxRowsInBand; r++) rows.push(buildRowFromColumns(band.columns, r));
+			children.push(new Table({
+				width: {
+					size: usableWidthTwips,
+					type: WidthType.DXA
+				},
+				layout: TableLayoutType.FIXED,
+				borders: INVISIBLE_TABLE_BORDERS,
+				rows
+			}));
+			if (bandIdx < bands.length - 1) children.push(new Paragraph({
+				spacing: {
+					before: 40,
+					after: 80
+				},
+				children: []
+			}));
 		});
-		children.push(new Table({
-			width: {
-				size: usableWidthTwips,
-				type: WidthType.DXA
-			},
-			layout: TableLayoutType.FIXED,
-			borders: INVISIBLE_TABLE_BORDERS,
-			rows
-		}));
+		else {
+			const rows = [];
+			bands.forEach((band) => {
+				const maxRowsInBand = Math.max(...band.columns.map((col) => col.length), 1);
+				for (let r = 0; r < maxRowsInBand; r++) rows.push(buildRowFromColumns(band.columns, r));
+			});
+			children.push(new Table({
+				width: {
+					size: usableWidthTwips,
+					type: WidthType.DXA
+				},
+				layout: TableLayoutType.FIXED,
+				borders: INVISIBLE_TABLE_BORDERS,
+				rows
+			}));
+		}
 	});
 	if (exam.blankSections.length > 0) exam.blankSections.forEach(() => {
 		children.push(new Paragraph({
@@ -79618,7 +82962,7 @@ function getAlignedX(align, margin, usableWidth) {
 		align: "center"
 	};
 }
-async function exportExamToPdf(exam) {
+async function exportExamToPdf(exam, zhToEnStyle = "underline") {
 	const fonts = await loadTraditionalChineseFonts();
 	const doc = new E({
 		orientation: "portrait",
@@ -79683,13 +83027,31 @@ async function exportExamToPdf(exam) {
 	doc.setLineWidth(.45);
 	doc.line(margin, y + 1.5, 194, y + 1.5);
 	y += 8;
-	const measureBandHeight = (band, colWidth) => {
+	const drawFourLineGrid = (x, topY, widthMm) => {
+		doc.setDrawColor(156, 163, 175);
+		doc.setLineWidth(.2);
+		doc.setLineDashPattern([], 0);
+		doc.line(x, topY, x + widthMm, topY);
+		doc.setDrawColor(107, 114, 128);
+		doc.setLineWidth(.2);
+		doc.setLineDashPattern([1.1, .9], 0);
+		doc.line(x, topY + 3.1, x + widthMm, topY + 3.1);
+		doc.setDrawColor(17, 24, 39);
+		doc.setLineWidth(.4);
+		doc.setLineDashPattern([], 0);
+		doc.line(x, topY + 6.2, x + widthMm, topY + 6.2);
+		doc.setDrawColor(156, 163, 175);
+		doc.setLineWidth(.2);
+		doc.setLineDashPattern([], 0);
+		doc.line(x, topY + 9.3, x + widthMm, topY + 9.3);
+	};
+	const measureBandHeight = (band, colWidth, layoutMode, useFourLine) => {
 		const maxRows = Math.max(...band.columns.map((c) => c.length), 1);
 		const rowHeights = [];
 		doc.setFont("NotoSansTC", "normal");
 		doc.setFontSize(10.5);
 		for (let r = 0; r < maxRows; r++) {
-			let maxRowH = 7.8;
+			let maxRowH = useFourLine ? 13.4 : 7.8;
 			for (let c = 0; c < exam.columnsPerRow; c++) {
 				const item = band.columns[c]?.[r];
 				if (!item) continue;
@@ -79697,26 +83059,29 @@ async function exportExamToPdf(exam) {
 				const scoreText = `(${formatScore(item.question.score)}分)`;
 				const scoreWidth = doc.getTextWidth(scoreText);
 				if (doc.getTextWidth(promptText) > colWidth - 4 - blankLineWidthMm - scoreWidth - 2) {
-					const needed = doc.splitTextToSize(promptText, colWidth - 5).length * 4.8 + 6.5;
+					const needed = doc.splitTextToSize(promptText, colWidth - 5).length * 4.8 + (useFourLine ? 12.2 : 6.5);
 					if (needed > maxRowH) maxRowH = needed;
 				}
 			}
 			rowHeights.push(maxRowH);
 		}
+		const extraPad = layoutMode === "vertical" ? 3 : 1.2;
 		return {
-			bandHeight: rowHeights.reduce((a, b) => a + b, 0) + 1.2,
+			bandHeight: rowHeights.reduce((a, b) => a + b, 0) + extraPad,
 			rowHeights
 		};
 	};
 	exam.sectionOrder.forEach((sectionId, sectionIdx) => {
 		const section = exam.sections[sectionId];
+		const layoutMode = section.layoutMode ?? "horizontal";
+		const useFourLine = sectionId === "zhToEn" && zhToEnStyle === "four-line";
 		const titleText = `${getSectionLetter(sectionIdx)}.${section.title.trim() || (sectionId === "zhToEn" ? "中翻英" : "英翻中")}`;
 		const summaryText = buildSectionScoreSummary(section);
 		const colGap = 6;
 		const colCount = exam.columnsPerRow;
 		const colWidth = (usableWidth - colGap * (colCount - 1)) / colCount;
-		const bands = buildQuestionBands(section.questions, colCount);
-		const firstBandMetrics = bands.length > 0 ? measureBandHeight(bands[0], colWidth) : null;
+		const bands = buildQuestionBands(section.questions, colCount, layoutMode);
+		const firstBandMetrics = bands.length > 0 ? measureBandHeight(bands[0], colWidth, layoutMode, useFourLine) : null;
 		const headerHeight = 9;
 		const initialNeeded = headerHeight + (firstBandMetrics ? firstBandMetrics.bandHeight : 10);
 		if (sectionIdx > 0) y += 4;
@@ -79740,7 +83105,7 @@ async function exportExamToPdf(exam) {
 			return;
 		}
 		bands.forEach((band) => {
-			const { bandHeight, rowHeights } = measureBandHeight(band, colWidth);
+			const { bandHeight, rowHeights } = measureBandHeight(band, colWidth, layoutMode, useFourLine);
 			ensureSpace(bandHeight);
 			let rowY = y;
 			const maxRows = rowHeights.length;
@@ -79762,7 +83127,7 @@ async function exportExamToPdf(exam) {
 					doc.setFontSize(8.5);
 					const scoreWidth = doc.getTextWidth(scoreStr);
 					if (numWidth + promptWidth + blankLineWidthMm + 1.5 + scoreWidth <= colWidth) {
-						const baselineY = rowY + 5;
+						const baselineY = useFourLine ? rowY + 7.2 : rowY + 5;
 						doc.setFont("NotoSansTC", "bold");
 						doc.setFontSize(10.5);
 						doc.setTextColor(17, 24, 39);
@@ -79770,9 +83135,12 @@ async function exportExamToPdf(exam) {
 						doc.setFont("NotoSansTC", "normal");
 						doc.text(promptStr, cellX + numWidth, baselineY);
 						const lineStartX = cellX + numWidth + promptWidth + .5;
-						doc.setDrawColor(17, 24, 39);
-						doc.setLineWidth(.3);
-						doc.line(lineStartX, baselineY + .6, lineStartX + blankLineWidthMm, baselineY + .6);
+						if (useFourLine) drawFourLineGrid(lineStartX, baselineY - 5.6, blankLineWidthMm);
+						else {
+							doc.setDrawColor(17, 24, 39);
+							doc.setLineWidth(.3);
+							doc.line(lineStartX, baselineY + .6, lineStartX + blankLineWidthMm, baselineY + .6);
+						}
 						doc.setFontSize(8.5);
 						doc.setTextColor(75, 85, 99);
 						doc.text(scoreStr, lineStartX + blankLineWidthMm + 1.5, baselineY);
@@ -79787,10 +83155,13 @@ async function exportExamToPdf(exam) {
 							doc.text(line, cellX, textY);
 							textY += 4.6;
 						});
-						const blankY = textY + 1;
-						doc.setDrawColor(17, 24, 39);
-						doc.setLineWidth(.3);
-						doc.line(cellX + 4, blankY + .5, cellX + 4 + blankLineWidthMm, blankY + .5);
+						const blankY = useFourLine ? textY + 6.5 : textY + 1;
+						if (useFourLine) drawFourLineGrid(cellX + 4, blankY - 5.6, blankLineWidthMm);
+						else {
+							doc.setDrawColor(17, 24, 39);
+							doc.setLineWidth(.3);
+							doc.line(cellX + 4, blankY + .5, cellX + 4 + blankLineWidthMm, blankY + .5);
+						}
 						doc.setFontSize(8.5);
 						doc.setTextColor(75, 85, 99);
 						doc.text(scoreStr, cellX + 4 + blankLineWidthMm + 1.5, blankY);
@@ -79825,7 +83196,19 @@ function loadInitialExam() {
 		const raw = localStorage.getItem(STORAGE_KEY);
 		if (!raw) return createDefaultExam();
 		const parsed = JSON.parse(raw);
-		if (parsed && parsed.header && Array.isArray(parsed.sectionOrder) && parsed.sections?.zhToEn && parsed.sections?.enToZh) return parsed;
+		if (parsed && parsed.header && Array.isArray(parsed.sectionOrder) && parsed.sections?.zhToEn && parsed.sections?.enToZh) return {
+			...parsed,
+			sections: {
+				zhToEn: {
+					...parsed.sections.zhToEn,
+					layoutMode: parsed.sections.zhToEn.layoutMode ?? "horizontal"
+				},
+				enToZh: {
+					...parsed.sections.enToZh,
+					layoutMode: parsed.sections.enToZh.layoutMode ?? "horizontal"
+				}
+			}
+		};
 	} catch {}
 	return createDefaultExam();
 }
@@ -79833,6 +83216,11 @@ function App() {
 	const [exam, setExam] = (0, import_react.useState)(loadInitialExam);
 	const [focusedQuestionId, setFocusedQuestionId] = (0, import_react.useState)(null);
 	const [pageCount, setPageCount] = (0, import_react.useState)(1);
+	const [fourLinePageCount, setFourLinePageCount] = (0, import_react.useState)(1);
+	const [activePrintZhStyle, setActivePrintZhStyle] = (0, import_react.useState)("underline");
+	const [modalStep, setModalStep] = (0, import_react.useState)("none");
+	const [pendingAction, setPendingAction] = (0, import_react.useState)(null);
+	const [modalSelectedStyle, setModalSelectedStyle] = (0, import_react.useState)("underline");
 	const [isDownloadingStandalone, setIsDownloadingStandalone] = (0, import_react.useState)(false);
 	const [isExportingWord, setIsExportingWord] = (0, import_react.useState)(false);
 	const [isExportingPdf, setIsExportingPdf] = (0, import_react.useState)(false);
@@ -79874,6 +83262,18 @@ function App() {
 				[sectionId]: {
 					...prev.sections[sectionId],
 					title
+				}
+			}
+		}));
+	}, []);
+	const handleSectionLayoutModeChange = (0, import_react.useCallback)((sectionId, layoutMode) => {
+		setExam((prev) => ({
+			...prev,
+			sections: {
+				...prev.sections,
+				[sectionId]: {
+					...prev.sections[sectionId],
+					layoutMode
 				}
 			}
 		}));
@@ -79963,8 +83363,74 @@ function App() {
 		setExam(createDefaultExam());
 		setExportError(null);
 	}, []);
-	const handlePrint = (0, import_react.useCallback)(() => {
-		window.print();
+	const executeExportAction = (0, import_react.useCallback)(async (action, style) => {
+		setExportError(null);
+		if (action === "print") {
+			setActivePrintZhStyle(style);
+			const handleAfterPrint = () => {
+				setActivePrintZhStyle("underline");
+				window.removeEventListener("afterprint", handleAfterPrint);
+			};
+			window.addEventListener("afterprint", handleAfterPrint);
+			setTimeout(() => {
+				window.print();
+			}, 120);
+			return;
+		}
+		if (action === "word") {
+			setIsExportingWord(true);
+			try {
+				await exportExamToDocx(exam, style);
+			} catch (err) {
+				setExportError(err instanceof Error ? `Word 匯出失敗：${err.message}` : "Word 匯出失敗，請稍後再試。");
+			} finally {
+				setIsExportingWord(false);
+			}
+			return;
+		}
+		if (action === "pdf") {
+			setIsExportingPdf(true);
+			try {
+				await exportExamToPdf(exam, style);
+			} catch (err) {
+				setExportError(err instanceof Error ? `PDF 匯出失敗：${err.message}` : "PDF 匯出失敗，請稍後再試。");
+			} finally {
+				setIsExportingPdf(false);
+			}
+		}
+	}, [exam]);
+	const openExportPrompt = (0, import_react.useCallback)((action) => {
+		setExportError(null);
+		setPendingAction(action);
+		setModalStep("choose-style");
+	}, []);
+	const handleConfirmStyleModal = (0, import_react.useCallback)(() => {
+		if (!pendingAction) return;
+		if (modalSelectedStyle === "four-line" && fourLinePageCount > 1) {
+			setModalStep("confirm-overflow");
+			return;
+		}
+		const actionToRun = pendingAction;
+		const styleToUse = modalSelectedStyle;
+		setModalStep("none");
+		setPendingAction(null);
+		executeExportAction(actionToRun, styleToUse);
+	}, [
+		pendingAction,
+		modalSelectedStyle,
+		fourLinePageCount,
+		executeExportAction
+	]);
+	const handleConfirmOverflowExport = (0, import_react.useCallback)(() => {
+		if (!pendingAction) return;
+		const actionToRun = pendingAction;
+		setModalStep("none");
+		setPendingAction(null);
+		executeExportAction(actionToRun, "four-line");
+	}, [pendingAction, executeExportAction]);
+	const handleCloseExportModal = (0, import_react.useCallback)(() => {
+		setModalStep("none");
+		setPendingAction(null);
 	}, []);
 	const handleDownloadStandalone = (0, import_react.useCallback)(async () => {
 		setExportError(null);
@@ -79998,28 +83464,6 @@ function App() {
 			setIsDownloadingStandalone(false);
 		}
 	}, []);
-	const handleExportWord = (0, import_react.useCallback)(async () => {
-		setExportError(null);
-		setIsExportingWord(true);
-		try {
-			await exportExamToDocx(exam);
-		} catch (err) {
-			setExportError(err instanceof Error ? `Word 匯出失敗：${err.message}` : "Word 匯出失敗，請稍後再試。");
-		} finally {
-			setIsExportingWord(false);
-		}
-	}, [exam]);
-	const handleExportPdf = (0, import_react.useCallback)(async () => {
-		setExportError(null);
-		setIsExportingPdf(true);
-		try {
-			await exportExamToPdf(exam);
-		} catch (err) {
-			setExportError(err instanceof Error ? `PDF 匯出失敗：${err.message}` : "PDF 匯出失敗，請稍後再試。");
-		} finally {
-			setIsExportingPdf(false);
-		}
-	}, [exam]);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		className: "min-h-screen bg-slate-100 print:bg-white",
 		children: [
@@ -80030,10 +83474,10 @@ function App() {
 				columnsPerRow: exam.columnsPerRow,
 				onColumnsChange: handleColumnsChange,
 				onResetExam: handleResetExam,
-				onPrint: handlePrint,
+				onPrint: () => openExportPrompt("print"),
 				onDownloadStandalone: handleDownloadStandalone,
-				onExportWord: handleExportWord,
-				onExportPdf: handleExportPdf,
+				onExportWord: () => openExportPrompt("word"),
+				onExportPdf: () => openExportPrompt("pdf"),
 				isDownloadingStandalone,
 				isExportingWord,
 				isExportingPdf
@@ -80055,6 +83499,7 @@ function App() {
 				onAddInfoField: handleAddInfoField,
 				onSectionOrderChange: handleSectionOrderChange,
 				onSectionTitleChange: handleSectionTitleChange,
+				onSectionLayoutModeChange: handleSectionLayoutModeChange,
 				onSectionTargetTotalChange: handleSectionTargetTotalChange,
 				onEnableAutoScore: handleEnableAutoScore,
 				onAddQuestion: handleAddQuestion,
@@ -80063,8 +83508,21 @@ function App() {
 				onDeleteQuestion: handleDeleteQuestion,
 				onAddBlankBlock: handleAddBlankBlock,
 				onDeleteBlankBlock: handleDeleteBlankBlock,
-				onPageCountChange: setPageCount
-			}) })
+				onPageCountChange: setPageCount,
+				zhToEnStyle: activePrintZhStyle,
+				onFourLinePageCountChange: setFourLinePageCount
+			}) }),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ExportStyleModals, {
+				step: modalStep,
+				actionType: pendingAction,
+				selectedStyle: modalSelectedStyle,
+				estimatedFourLinePages: fourLinePageCount,
+				onSelectStyle: setModalSelectedStyle,
+				onConfirmStyle: handleConfirmStyleModal,
+				onBackToStyleModal: () => setModalStep("choose-style"),
+				onConfirmOverflowExport: handleConfirmOverflowExport,
+				onClose: handleCloseExportModal
+			})
 		]
 	});
 }
@@ -80074,6 +83532,9 @@ function App() {
 @layer properties {
   @supports (((-webkit-hyphens: none)) and (not (margin-trim: block))) or ((-moz-orient: inline) and (not (color: rgb(from red r g b)))) {
     *, :before, :after, ::backdrop {
+      --tw-translate-x: 0;
+      --tw-translate-y: 0;
+      --tw-translate-z: 0;
       --tw-rotate-x: initial;
       --tw-rotate-y: initial;
       --tw-rotate-z: initial;
@@ -80103,6 +83564,15 @@ function App() {
       --tw-ring-offset-width: 0px;
       --tw-ring-offset-color: #fff;
       --tw-ring-offset-shadow: 0 0 #0000;
+      --tw-backdrop-blur: initial;
+      --tw-backdrop-brightness: initial;
+      --tw-backdrop-contrast: initial;
+      --tw-backdrop-grayscale: initial;
+      --tw-backdrop-hue-rotate: initial;
+      --tw-backdrop-invert: initial;
+      --tw-backdrop-opacity: initial;
+      --tw-backdrop-saturate: initial;
+      --tw-backdrop-sepia: initial;
     }
   }
 }
@@ -80117,6 +83587,7 @@ function App() {
     --color-amber-50: oklch(98.7% .022 95.277);
     --color-amber-200: oklch(92.4% .12 95.746);
     --color-amber-400: oklch(82.8% .189 84.429);
+    --color-amber-700: oklch(55.5% .163 48.998);
     --color-amber-900: oklch(41.4% .112 45.904);
     --color-blue-50: oklch(97% .014 254.604);
     --color-blue-100: oklch(93.2% .032 255.585);
@@ -80144,10 +83615,13 @@ function App() {
     --color-slate-950: oklch(12.9% .042 264.695);
     --color-white: #fff;
     --spacing: .25rem;
+    --container-md: 28rem;
     --text-xs: .75rem;
     --text-xs--line-height: calc(1 / .75);
     --text-sm: .875rem;
     --text-sm--line-height: calc(1.25 / .875);
+    --text-base: 1rem;
+    --text-base--line-height: calc(1.5 / 1);
     --text-lg: 1.125rem;
     --text-lg--line-height: calc(1.75 / 1.125);
     --font-weight-normal: 400;
@@ -80157,6 +83631,7 @@ function App() {
     --tracking-tight: -.025em;
     --tracking-wide: .025em;
     --leading-snug: 1.375;
+    --leading-relaxed: 1.625;
     --radius-md: .375rem;
     --radius-lg: .5rem;
     --radius-xl: .75rem;
@@ -80449,12 +83924,20 @@ function App() {
     position: sticky;
   }
 
+  .inset-0 {
+    inset: 0;
+  }
+
   .-top-7 {
     top: calc(var(--spacing) * -7);
   }
 
   .top-0 {
     top: 0;
+  }
+
+  .top-1\/2 {
+    top: 50%;
   }
 
   .top-2 {
@@ -80467,6 +83950,10 @@ function App() {
 
   .right-2 {
     right: calc(var(--spacing) * 2);
+  }
+
+  .-left-\[46px\] {
+    left: -46px;
   }
 
   .-left-\[9999px\] {
@@ -80483,6 +83970,10 @@ function App() {
 
   .z-30 {
     z-index: 30;
+  }
+
+  .z-50 {
+    z-index: 50;
   }
 
   .-m-2 {
@@ -80549,6 +84040,10 @@ function App() {
     display: inline-flex;
   }
 
+  .h-2 {
+    height: calc(var(--spacing) * 2);
+  }
+
   .h-3 {
     height: calc(var(--spacing) * 3);
   }
@@ -80559,6 +84054,14 @@ function App() {
 
   .h-4 {
     height: calc(var(--spacing) * 4);
+  }
+
+  .h-5 {
+    height: calc(var(--spacing) * 5);
+  }
+
+  .h-7 {
+    height: calc(var(--spacing) * 7);
   }
 
   .h-16 {
@@ -80589,6 +84092,10 @@ function App() {
     min-height: 100vh;
   }
 
+  .w-2 {
+    width: calc(var(--spacing) * 2);
+  }
+
   .w-3 {
     width: calc(var(--spacing) * 3);
   }
@@ -80605,12 +84112,20 @@ function App() {
     width: calc(var(--spacing) * 5);
   }
 
+  .w-7 {
+    width: calc(var(--spacing) * 7);
+  }
+
   .w-8 {
     width: calc(var(--spacing) * 8);
   }
 
   .w-12 {
     width: calc(var(--spacing) * 12);
+  }
+
+  .w-24 {
+    width: calc(var(--spacing) * 24);
   }
 
   .w-28 {
@@ -80645,6 +84160,10 @@ function App() {
     max-width: 1440px;
   }
 
+  .max-w-md {
+    max-width: var(--container-md);
+  }
+
   .min-w-0 {
     min-width: 0;
   }
@@ -80665,6 +84184,11 @@ function App() {
     flex-shrink: 0;
   }
 
+  .-translate-y-1\/2 {
+    --tw-translate-y: calc(calc(1 / 2 * 100%) * -1);
+    translate: var(--tw-translate-x) var(--tw-translate-y);
+  }
+
   .transform {
     transform: var(--tw-rotate-x, ) var(--tw-rotate-y, ) var(--tw-rotate-z, ) var(--tw-skew-x, ) var(--tw-skew-y, );
   }
@@ -80679,6 +84203,10 @@ function App() {
 
   .cursor-pointer {
     cursor: pointer;
+  }
+
+  .grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
   }
 
   .flex-col {
@@ -80707,6 +84235,10 @@ function App() {
 
   .justify-center {
     justify-content: center;
+  }
+
+  .justify-end {
+    justify-content: flex-end;
   }
 
   .gap-0\.5 {
@@ -80751,6 +84283,18 @@ function App() {
     margin-block-end: calc(calc(var(--spacing) * 2) * calc(1 - var(--tw-space-y-reverse)));
   }
 
+  :where(.space-y-2\.5 > :not(:last-child)) {
+    --tw-space-y-reverse: 0;
+    margin-block-start: calc(calc(var(--spacing) * 2.5) * var(--tw-space-y-reverse));
+    margin-block-end: calc(calc(var(--spacing) * 2.5) * calc(1 - var(--tw-space-y-reverse)));
+  }
+
+  :where(.space-y-3 > :not(:last-child)) {
+    --tw-space-y-reverse: 0;
+    margin-block-start: calc(calc(var(--spacing) * 3) * var(--tw-space-y-reverse));
+    margin-block-end: calc(calc(var(--spacing) * 3) * calc(1 - var(--tw-space-y-reverse)));
+  }
+
   .gap-x-1 {
     column-gap: var(--spacing);
   }
@@ -80769,12 +84313,20 @@ function App() {
     overflow: hidden;
   }
 
+  .overflow-hidden {
+    overflow: hidden;
+  }
+
   .overflow-x-auto {
     overflow-x: auto;
   }
 
   .rounded {
     border-radius: .25rem;
+  }
+
+  .rounded-full {
+    border-radius: 2147483647px;
   }
 
   .rounded-lg {
@@ -80859,6 +84411,16 @@ function App() {
     border-color: var(--color-slate-200);
   }
 
+  .border-slate-200\/80 {
+    border-color: #e2e8f0cc;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .border-slate-200\/80 {
+      border-color: color-mix(in oklab, var(--color-slate-200) 80%, transparent);
+    }
+  }
+
   .border-slate-200\/90 {
     border-color: #e2e8f0e6;
   }
@@ -80923,6 +84485,16 @@ function App() {
     }
   }
 
+  .bg-blue-50\/50 {
+    background-color: #eff6ff80;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .bg-blue-50\/50 {
+      background-color: color-mix(in oklab, var(--color-blue-50) 50%, transparent);
+    }
+  }
+
   .bg-blue-50\/70 {
     background-color: #eff6ffb3;
   }
@@ -80943,12 +84515,20 @@ function App() {
     }
   }
 
+  .bg-blue-600 {
+    background-color: var(--color-blue-600);
+  }
+
   .bg-blue-700 {
     background-color: var(--color-blue-700);
   }
 
   .bg-rose-50 {
     background-color: var(--color-rose-50);
+  }
+
+  .bg-slate-50 {
+    background-color: var(--color-slate-50);
   }
 
   .bg-slate-50\/70 {
@@ -80976,6 +84556,16 @@ function App() {
   @supports (color: color-mix(in lab, red, red)) {
     .bg-slate-200\/70 {
       background-color: color-mix(in oklab, var(--color-slate-200) 70%, transparent);
+    }
+  }
+
+  .bg-slate-900\/45 {
+    background-color: #0f172b73;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .bg-slate-900\/45 {
+      background-color: color-mix(in oklab, var(--color-slate-900) 45%, transparent);
     }
   }
 
@@ -81009,6 +84599,18 @@ function App() {
     padding: calc(var(--spacing) * 2);
   }
 
+  .p-3\.5 {
+    padding: calc(var(--spacing) * 3.5);
+  }
+
+  .p-4 {
+    padding: calc(var(--spacing) * 4);
+  }
+
+  .p-5 {
+    padding: calc(var(--spacing) * 5);
+  }
+
   .px-1 {
     padding-inline: var(--spacing);
   }
@@ -81035,6 +84637,10 @@ function App() {
 
   .px-4 {
     padding-inline: calc(var(--spacing) * 4);
+  }
+
+  .px-5 {
+    padding-inline: calc(var(--spacing) * 5);
   }
 
   .px-\[60px\] {
@@ -81067,6 +84673,10 @@ function App() {
 
   .py-3\.5 {
     padding-block: calc(var(--spacing) * 3.5);
+  }
+
+  .py-4 {
+    padding-block: calc(var(--spacing) * 4);
   }
 
   .py-6 {
@@ -81117,8 +84727,17 @@ function App() {
     text-align: right;
   }
 
+  .align-middle {
+    vertical-align: middle;
+  }
+
   .font-mono {
     font-family: var(--font-mono);
+  }
+
+  .text-base {
+    font-size: var(--text-base);
+    line-height: var(--tw-leading, var(--text-base--line-height));
   }
 
   .text-lg {
@@ -81162,6 +84781,11 @@ function App() {
 
   .text-\[24px\] {
     font-size: 24px;
+  }
+
+  .leading-relaxed {
+    --tw-leading: var(--leading-relaxed);
+    line-height: var(--leading-relaxed);
   }
 
   .leading-snug {
@@ -81209,6 +84833,10 @@ function App() {
 
   .text-amber-400 {
     color: var(--color-amber-400);
+  }
+
+  .text-amber-700 {
+    color: var(--color-amber-700);
   }
 
   .text-amber-900 {
@@ -81289,6 +84917,11 @@ function App() {
     opacity: .4;
   }
 
+  .shadow-2xl {
+    --tw-shadow: 0 25px 50px -12px var(--tw-shadow-color, #00000040);
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+
   .shadow-\[0_6px_28px_rgba\(15\,23\,42\,0\.08\)\] {
     --tw-shadow: 0 6px 28px var(--tw-shadow-color, #0f172a14);
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
@@ -81325,6 +84958,12 @@ function App() {
 
   .ring-blue-500 {
     --tw-ring-color: var(--color-blue-500);
+  }
+
+  .backdrop-blur-\[1px\] {
+    --tw-backdrop-blur: blur(1px);
+    -webkit-backdrop-filter: var(--tw-backdrop-blur, ) var(--tw-backdrop-brightness, ) var(--tw-backdrop-contrast, ) var(--tw-backdrop-grayscale, ) var(--tw-backdrop-hue-rotate, ) var(--tw-backdrop-invert, ) var(--tw-backdrop-opacity, ) var(--tw-backdrop-saturate, ) var(--tw-backdrop-sepia, );
+    backdrop-filter: var(--tw-backdrop-blur, ) var(--tw-backdrop-brightness, ) var(--tw-backdrop-contrast, ) var(--tw-backdrop-grayscale, ) var(--tw-backdrop-hue-rotate, ) var(--tw-backdrop-invert, ) var(--tw-backdrop-opacity, ) var(--tw-backdrop-saturate, ) var(--tw-backdrop-sepia, );
   }
 
   .transition-all {
@@ -81609,6 +85248,24 @@ input[type="number"] {
   }
 }
 
+@property --tw-translate-x {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --tw-translate-y {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --tw-translate-z {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
+}
+
 @property --tw-rotate-x {
   syntax: "*";
   inherits: false
@@ -81763,6 +85420,51 @@ input[type="number"] {
   syntax: "*";
   inherits: false;
   initial-value: 0 0 #0000;
+}
+
+@property --tw-backdrop-blur {
+  syntax: "*";
+  inherits: false
+}
+
+@property --tw-backdrop-brightness {
+  syntax: "*";
+  inherits: false
+}
+
+@property --tw-backdrop-contrast {
+  syntax: "*";
+  inherits: false
+}
+
+@property --tw-backdrop-grayscale {
+  syntax: "*";
+  inherits: false
+}
+
+@property --tw-backdrop-hue-rotate {
+  syntax: "*";
+  inherits: false
+}
+
+@property --tw-backdrop-invert {
+  syntax: "*";
+  inherits: false
+}
+
+@property --tw-backdrop-opacity {
+  syntax: "*";
+  inherits: false
+}
+
+@property --tw-backdrop-saturate {
+  syntax: "*";
+  inherits: false
+}
+
+@property --tw-backdrop-sepia {
+  syntax: "*";
+  inherits: false
 }
 
 @keyframes spin {
